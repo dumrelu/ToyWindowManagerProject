@@ -81,4 +81,9 @@ public class Window extends Thread
     {
         return this.getRectangle().y;
     }
+    
+    protected void onCloseButton()
+    {
+        this.manager.remove(this);
+    }
 }

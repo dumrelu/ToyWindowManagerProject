@@ -135,10 +135,22 @@ public class DesktopCanvas extends Canvas
         for(Window window : manager.getWindows(desktop))
         {
             manager.pauseUpdates(window);
+            Rectangle windowRect = window.getRectangle();
             if(window.getRectangle().intersects(x, y))
             {
+                if(isClickOnCloseButton(windowRect, x, y))
+                {
+                    if(window == selectedWindow)
+                    {
+                        manager.unfocusWindow(selectedWindow);
+                        this.selectedWindow = null;
+                    }
+                    window.onCloseButton();
+                    break;
+                }
+                
                 clickedWindow = window;
-                shouldMoveWindow = isClickOnWindowBorder(window.getRectangle(), x, y);
+                shouldMoveWindow = isClickOnWindowBorder(windowRect, x, y);
                 break;
             }
             manager.resumeUpdates(window);
@@ -152,5 +164,11 @@ public class DesktopCanvas extends Canvas
     {
         Rectangle borderRect = new Rectangle(windowRect.x, windowRect.y, windowRect.width, Renderer.BORDER_HEIGHT);
         return borderRect.intersects(x, y);
+    }
+    
+    private boolean isClickOnCloseButton(Rectangle windowRect, int x, int y)
+    {
+        Rectangle closeButtonRect = Renderer.getCloseButtonRect(windowRect);
+        return closeButtonRect.intersects(x, y);
     }
 }

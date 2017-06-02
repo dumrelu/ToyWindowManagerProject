@@ -16,6 +16,8 @@ public class Renderer extends Thread
     
     public static final int BORDER_HEIGHT = 20;
     public static final int TITLE_OFFSET = 10;
+    public static final int CLOSE_BUTTON_SIZE = (int) (BORDER_HEIGHT * 0.6);
+    public static final int CLOSE_BUTTON_OFFSET = 10;
     
     public Renderer(Manager manager, int fps)
     {
@@ -90,13 +92,20 @@ public class Renderer extends Thread
             g.setColor(Color.DARK_GRAY);
             g.fillRect(windowRect.x, windowRect.y, windowRect.width, BORDER_HEIGHT);
             
+            //Title
             String title = window.getTitle();
             int fontHeight = Math.round(getTextHeight(windowG, title));
-            int margin = BORDER_HEIGHT - fontHeight;
-            int textY = fontHeight + margin / 2;
+            int textMargin = BORDER_HEIGHT - fontHeight;
+            int textY = fontHeight + textMargin / 2;
             
             g.setColor(Color.WHITE);
             g.drawString(window.getTitle(), windowRect.x + TITLE_OFFSET, windowRect.y + textY);
+            
+            //Close button
+            Rectangle closeButtonRect = getCloseButtonRect(windowRect);
+            
+            g.setColor(Color.RED);
+            g.fillOval(closeButtonRect.x, closeButtonRect.y, closeButtonRect.width, closeButtonRect.height);
             
             //Focus border
             if(manager.isFocused(window))
@@ -110,6 +119,15 @@ public class Renderer extends Thread
         }
         
         frameBuffer.endRender(g);
+    }
+    
+    public static Rectangle getCloseButtonRect(Rectangle windowRect)
+    {
+        int buttonMargin = BORDER_HEIGHT - CLOSE_BUTTON_SIZE;
+        int buttonX = windowRect.x + windowRect.width - CLOSE_BUTTON_OFFSET - CLOSE_BUTTON_SIZE / 2;
+        int buttonY = windowRect.y + buttonMargin / 2;
+        
+        return new Rectangle(buttonX, buttonY, CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE);
     }
     
     private float getTextHeight(Graphics2D g2, String text)
