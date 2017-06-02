@@ -11,7 +11,8 @@ public class DesktopCanvas extends Canvas
     private Desktop desktop;
     private BufferedImage buffer;
     private Window selectedWindow = null;
-    private boolean isMosePressed = false;
+    private int xDiff = 0;
+    private int yDiff = 0;
     
     public DesktopCanvas(Desktop desktop)
     {
@@ -20,12 +21,19 @@ public class DesktopCanvas extends Canvas
         
         setSize(this.buffer.getWidth(), this.buffer.getHeight());
         
-        //TODO: listeners
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e)
             {
                 onMousePressed(e.getX(), e.getY());
+            }
+        });
+        
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e)
+            {
+                onMouseMove(e.getX(), e.getY());
             }
         });
     }
@@ -60,7 +68,7 @@ public class DesktopCanvas extends Canvas
         frameBuffer.getLock().unlock();
     }
     
-    public void onMousePressed(int x, int y)
+    private void onMousePressed(int x, int y)
     {
         Manager manager = this.desktop.getManager();
         
@@ -80,9 +88,22 @@ public class DesktopCanvas extends Canvas
         {
             this.selectedWindow = clickedWindow;
             manager.getLogger().log(Logger.DEBUG, "Window selected: " + this.selectedWindow.getTitle());
+            this.xDiff = this.selectedWindow.getX() - x;
+            this.yDiff = this.selectedWindow.getY() - y;
+        }
+    }
+    
+    private void onMouseMove(int x, int y)
+    {
+        if(this.selectedWindow == null)
+        {
+            return;
         }
         
-        this.isMosePressed = true;
+        Rectangle currentRect = this.selectedWindow.getRectangle();
+        Rectangle newRect = new Rectangle(x + this.xDiff, y + this.yDiff, currentRect.width, currentRect.height);
+        
+        this.selectedWindow.getManager().setRectangle(this.selectedWindow, newRect);
     }
 
     private Window findClickedWindow(int x, int y) 

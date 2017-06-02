@@ -67,4 +67,14 @@ public class Window extends Thread
     {
         return this.buffer.getHeight();
     }
+    
+    public int getX()
+    {
+        return this.getRectangle().x;
+    }
+    
+    public int getY()
+    {
+        return this.getRectangle().y;
+    }
 }
