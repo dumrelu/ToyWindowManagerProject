@@ -1,6 +1,7 @@
 package com.iclp.windowmanager;
 
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,7 +15,7 @@ public class Manager
     {
         String title = "";
         Rectangle rect = new Rectangle();
-        ReentrantLock lock = new ReentrantLock();
+        ReentrantLock updateLock = new ReentrantLock();
     }
     
     private class DesktopInfo
@@ -84,7 +85,48 @@ public class Manager
         }
     }
     
+    public void setDesktop(Window window, Desktop desktop)
+    {
+        DesktopInfo desktopInfo = this.desktops.get(desktop);
+        Desktop oldDesktop = getDesktop(window);
+        if(oldDesktop == null)
+        {
+            desktopInfo.lock.lock();
+            desktopInfo.windows.add(window);
+            desktopInfo.lock.unlock();
+            
+            return;
+        }
+        
+        DesktopInfo oldDesktopInfo = this.desktops.get(oldDesktop);
+        
+        lockDesktops(desktopInfo, oldDesktopInfo);
+        
+        oldDesktopInfo.windows.remove(window);
+        desktopInfo.windows.add(window);
+        
+        unlockDesktops(desktopInfo, oldDesktopInfo);
+    }
     
+    public Desktop getDesktop(Window window)
+    {
+        for(Entry<Desktop, DesktopInfo> entry : this.desktops.entrySet())
+        {
+            Desktop desktop = entry.getKey();
+            DesktopInfo desktopInfo = entry.getValue();
+            
+            desktopInfo.lock.lock();
+            int index = desktopInfo.windows.indexOf(window);
+            desktopInfo.lock.unlock();
+            
+            if(index != -1)
+            {
+                return desktop;
+            }
+        }
+        
+        return null;
+    }
     
     public void add(Desktop desktop)
     {
@@ -111,5 +153,23 @@ public class Manager
         }
     }
     
+    private void lockDesktops(DesktopInfo lhs, DesktopInfo rhs)
+    {
+        if(lhs.name.compareTo(rhs.name) < 0)
+        {
+            lhs.lock.lock();
+            rhs.lock.lock();
+        }
+        else
+        {
+            rhs.lock.lock();
+            lhs.lock.lock();
+        }
+    }
     
+    private void unlockDesktops(DesktopInfo lhs, DesktopInfo rhs)
+    {
+        lhs.lock.unlock();
+        rhs.lock.unlock();
+    }
 }

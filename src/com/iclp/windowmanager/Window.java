@@ -20,7 +20,7 @@ public class Window extends Thread
         return this.manager;
     }
     
-    public String setTitle(String title)
+    public void setTitle(String title)
     {
         this.manager.setTitle(this, title);
     }
@@ -47,7 +47,7 @@ public class Window extends Thread
     
     public Rectangle getRectangle()
     {
-        return this.manager.getRectangle();
+        return this.manager.getRectangle(this);
     }
     
     public FrameBuffer getBuffer()
