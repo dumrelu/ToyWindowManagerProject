@@ -53,6 +53,17 @@ public class Manager
         this.windows.put(window, new WindowInfo());
     }
     
+    public void remove(Window window)
+    {
+        Desktop desktop = getDesktop(window);
+        DesktopInfo info = desktops.get(desktop);
+        
+        synchronized(info)
+        {
+            info.windows.remove(window);
+        }
+    }
+    
     public void setTitle(Window window, String title)
     {
         WindowInfo info = this.windows.get(window);
@@ -183,6 +194,10 @@ public class Manager
         
         synchronized(info)
         {
+            //Ensure that the focused window is always drawn on top
+            info.windows.remove(window);
+            info.windows.add(window);
+            
             info.focusedWindow = window;
         }
     }
