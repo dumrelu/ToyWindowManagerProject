@@ -3,12 +3,14 @@ package com.iclp.windowmanager;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap.KeySetView;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-
+//TODO: 
+//      - swapDesktops
 public class Manager
 {
     private class WindowInfo
@@ -153,6 +155,21 @@ public class Manager
         }
     }
     
+    public KeySetView<Desktop, DesktopInfo> getDesktops()
+    {
+        return this.desktops.keySet();
+    }
+    
+    public ArrayList<Window> getWindows(Desktop desktop)
+    {
+        DesktopInfo info = desktops.get(desktop);
+        
+        synchronized(info)
+        {
+            return info.windows;
+        }
+    }
+    
     public void update(UpdateRequest request)
     {
         this.threadPool.execute(request);
@@ -205,6 +222,26 @@ public class Manager
         synchronized(info)
         {
             return !info.updateLock.isLocked();
+        }
+    }
+    
+    public void lockDesktop(Desktop desktop)
+    {
+        DesktopInfo info = this.desktops.get(desktop);
+        
+        synchronized(info)
+        {
+            info.lock.lock();
+        }
+    }
+    
+    public void unlockDesktop(Desktop desktop)
+    {
+        DesktopInfo info = this.desktops.get(desktop);
+        
+        synchronized(info)
+        {
+            info.lock.unlock();
         }
     }
     

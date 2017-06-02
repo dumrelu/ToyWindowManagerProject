@@ -18,6 +18,11 @@ public class Desktop
         this.manager.add(this);
     }
     
+    public Manager getManager()
+    {
+        return this.manager;
+    }
+    
     public void setName(String name)
     {
         this.manager.setName(this, name);

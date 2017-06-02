@@ -35,9 +35,23 @@ public class FrameBuffer
         return this.lock;
     }
     
+    public BufferedImage getBuffer()
+    {
+        return this.buffer;
+    }
+    
     public Graphics2D beginRender()
     {
         this.lock.lock();
+        return this.buffer.createGraphics();
+    }
+    
+    public Graphics2D tryBeginRender()
+    {
+        if(!this.lock.tryLock())
+        {
+            return null;
+        }
         return this.buffer.createGraphics();
     }
     
