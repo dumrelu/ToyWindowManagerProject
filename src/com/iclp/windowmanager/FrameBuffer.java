@@ -27,7 +27,7 @@ public class FrameBuffer
     
     public void resize(int width, int height)
     {
-        this.buffer = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
+        this.buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
     
     public ReentrantLock getLock()

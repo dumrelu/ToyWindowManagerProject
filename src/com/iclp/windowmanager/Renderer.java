@@ -3,6 +3,7 @@ package com.iclp.windowmanager;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.font.FontRenderContext;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,6 +13,9 @@ public class Renderer extends Thread
     private Manager manager;
     private int fps;
     private ArrayList<DesktopCanvas> canvases;
+    
+    private static final int BORDER_HEIGHT = 20;
+    private static final int TITLE_OFFSET = 10;
     
     public Renderer(Manager manager, int fps)
     {
@@ -83,7 +87,16 @@ public class Renderer extends Thread
             
             g.drawImage(windowFrameBuffer.getBuffer(), windowRect.x, windowRect.y, null);
             
-            //TODO: draw title bar
+            g.setColor(Color.DARK_GRAY);
+            g.fillRect(windowRect.x, windowRect.y, windowRect.width, BORDER_HEIGHT);
+            
+            String title = window.getTitle();
+            int fontHeight = Math.round(getTextHeight(g, title));
+            int margin = BORDER_HEIGHT - fontHeight;
+            int textY = windowRect.y + fontHeight + margin / 2;
+            
+            g.setColor(Color.WHITE);
+            g.drawString(window.getTitle(), windowRect.x + TITLE_OFFSET, textY);
             
             //Focus border
             if(manager.isFocused(window))
@@ -97,5 +110,11 @@ public class Renderer extends Thread
         }
         
         frameBuffer.endRender(g);
+    }
+    
+    private float getTextHeight(Graphics2D g2, String text)
+    {
+        FontRenderContext fcc = g2.getFontRenderContext();
+        return g2.getFont().getLineMetrics(text, fcc).getHeight();
     }
 }

@@ -68,12 +68,12 @@ public class DemoGUI extends javax.swing.JFrame
             }
         }
 
-        Desktop desktop1 = new Desktop(this.manager, "Desktop1", Color.GREEN, 400, 300);
-        Desktop desktop2 = new Desktop(this.manager, "Desktop2", Color.ORANGE, 400, 300);
+        Desktop desktop1 = new Desktop(this.manager, "Desktop1", Color.GREEN, 700, 500);
+        Desktop desktop2 = new Desktop(this.manager, "Desktop2", Color.ORANGE, 700, 500);
         
-        Window window1 = new TestWindow(this.manager, desktop1, "Window 1", 100, 100);
+        Window window1 = new TestWindow(this.manager, desktop1, "Window 1", 300, 200);
         window1.start();
-        Window window2 = new TestWindow(this.manager, desktop2, "Window 2", 100, 100);
+        Window window2 = new TestWindow(this.manager, desktop2, "Window 2", 300, 200);
         window2.start();
         
         initComponents();
@@ -97,6 +97,7 @@ public class DemoGUI extends javax.swing.JFrame
     private void initComponents() {
 
         canvasPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -104,24 +105,32 @@ public class DemoGUI extends javax.swing.JFrame
         canvasPanel.setLayout(canvasPanelLayout);
         canvasPanelLayout.setHorizontalGroup(
             canvasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 823, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         canvasPanelLayout.setVerticalGroup(
             canvasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 234, Short.MAX_VALUE)
         );
 
+        jLabel1.setText("jLabel1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(canvasPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(446, 446, 446)
+                .addComponent(jLabel1)
+                .addContainerGap(1005, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(canvasPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 192, Short.MAX_VALUE))
+                .addGap(72, 72, 72)
+                .addComponent(jLabel1)
+                .addGap(0, 376, Short.MAX_VALUE))
         );
 
         pack();
@@ -165,5 +174,6 @@ public class DemoGUI extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel canvasPanel;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }
