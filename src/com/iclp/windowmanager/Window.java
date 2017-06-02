@@ -1,5 +1,9 @@
 package com.iclp.windowmanager;
 
+import com.iclp.windowmanager.updates.UpdateWindowDesktop;
+import com.iclp.windowmanager.updates.UpdateWindowRectangle;
+import com.iclp.windowmanager.updates.UpdateWindowTitle;
+
 
 public class Window extends Thread
 {
@@ -24,8 +28,7 @@ public class Window extends Thread
     
     public void setTitle(String title)
     {
-        this.manager.setTitle(this, title);
-        //TODO: update request
+        this.manager.update(new UpdateWindowTitle(this, title));
     }
     
     public String getTitle()
@@ -35,7 +38,7 @@ public class Window extends Thread
     
     public void setDesktop(Desktop desktop)
     {
-        this.manager.setDesktop(this, desktop);
+        this.manager.update(new UpdateWindowDesktop(this, desktop));
     }
     
     public Desktop getDesktop()
@@ -45,7 +48,7 @@ public class Window extends Thread
     
     public void setRectangle(Rectangle rectangle)
     {
-        this.manager.setRectangle(this, rectangle);
+        this.manager.update(new UpdateWindowRectangle(this, rectangle));
     }
     
     public Rectangle getRectangle()
