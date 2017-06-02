@@ -23,5 +23,6 @@ public class UpdateWindowRectangle extends UpdateRequest
         Manager manager = window.getManager();
         
         manager.setRectangle(window, this.rect);
+        window.getBuffer().resize(rect.width, rect.height);
     }
 }

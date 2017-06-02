@@ -91,12 +91,12 @@ public class Renderer extends Thread
             g.fillRect(windowRect.x, windowRect.y, windowRect.width, BORDER_HEIGHT);
             
             String title = window.getTitle();
-            int fontHeight = Math.round(getTextHeight(g, title));
+            int fontHeight = Math.round(getTextHeight(windowG, title));
             int margin = BORDER_HEIGHT - fontHeight;
-            int textY = windowRect.y + fontHeight + margin / 2;
+            int textY = fontHeight + margin / 2;
             
             g.setColor(Color.WHITE);
-            g.drawString(window.getTitle(), windowRect.x + TITLE_OFFSET, textY);
+            g.drawString(window.getTitle(), windowRect.x + TITLE_OFFSET, windowRect.y + textY);
             
             //Focus border
             if(manager.isFocused(window))
@@ -106,7 +106,7 @@ public class Renderer extends Thread
                 g.drawRect(windowRect.x, windowRect.y, windowRect.width, windowRect.height);
             }
             
-            windowFrameBuffer.endRender(g);
+            windowFrameBuffer.endRender(windowG);
         }
         
         frameBuffer.endRender(g);
