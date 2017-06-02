@@ -1,5 +1,6 @@
 package com.iclp.windowmanager;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -83,6 +84,14 @@ public class Renderer extends Thread
             g.drawImage(windowFrameBuffer.getBuffer(), windowRect.x, windowRect.y, null);
             
             //TODO: draw title bar
+            
+            //Focus border
+            if(manager.isFocused(window))
+            {
+                g.setColor(Color.YELLOW);
+                g.setStroke(new BasicStroke(3.5f));
+                g.drawRect(windowRect.x, windowRect.y, windowRect.width, windowRect.height);
+            }
             
             windowFrameBuffer.endRender(g);
         }

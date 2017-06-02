@@ -86,12 +86,14 @@ public class DesktopCanvas extends Canvas
         
         if(this.selectedWindow != null)
         {
+            manager.unfocusWindow(selectedWindow);
             this.selectedWindow = null;
         }
         
         if(clickedWindow != null)
         {
             this.selectedWindow = clickedWindow;
+            manager.focusWindow(selectedWindow);
             manager.getLogger().log(Logger.DEBUG, "Window selected: " + this.selectedWindow.getTitle());
             this.xDiff = this.selectedWindow.getX() - x;
             this.yDiff = this.selectedWindow.getY() - y;

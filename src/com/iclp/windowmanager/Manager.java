@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 //TODO: 
-//      - swapDesktops
+//      - swapDesktops(watch out for the focused window information)
 public class Manager
 {
     private class WindowInfo
@@ -24,6 +24,7 @@ public class Manager
     {
         String name = "";
         ArrayList<Window> windows = new ArrayList<>();
+        Window focusedWindow = null;
         ReentrantLock lock = new ReentrantLock();
     }
     
@@ -172,6 +173,39 @@ public class Manager
         synchronized(info)
         {
             return info.windows;
+        }
+    }
+    
+    public void focusWindow(Window window)
+    {
+        Desktop desktop = getDesktop(window);
+        DesktopInfo info = desktops.get(desktop);
+        
+        synchronized(info)
+        {
+            info.focusedWindow = window;
+        }
+    }
+    
+    public void unfocusWindow(Window window)
+    {
+        Desktop desktop = getDesktop(window);
+        DesktopInfo info = desktops.get(desktop);
+        
+        synchronized(info)
+        {
+            info.focusedWindow = null;
+        }
+    }
+    
+    public boolean isFocused(Window window)
+    {
+        Desktop desktop = getDesktop(window);
+        DesktopInfo info = desktops.get(desktop);
+        
+        synchronized(info)
+        {
+            return info.focusedWindow == window;
         }
     }
     

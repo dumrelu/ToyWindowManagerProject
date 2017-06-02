@@ -4,7 +4,8 @@ import com.iclp.windowmanager.updates.UpdateWindowDesktop;
 import com.iclp.windowmanager.updates.UpdateWindowRectangle;
 import com.iclp.windowmanager.updates.UpdateWindowTitle;
 
-
+//TODO: 
+//      - focus/isFocused
 public class Window extends Thread
 {
     private Manager manager;
