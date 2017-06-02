@@ -9,13 +9,14 @@ public class Desktop
     private FrameBuffer buffer;
     private Color background;
     
-    public Desktop(Manager manager, Color background, int width, int height)
+    public Desktop(Manager manager, String name, Color background, int width, int height)
     {
         this.manager = manager;
         this.buffer = new FrameBuffer(width, height);
         this.background = background;
         
         this.manager.add(this);
+        this.manager.setName(this, name);
     }
     
     public Manager getManager()

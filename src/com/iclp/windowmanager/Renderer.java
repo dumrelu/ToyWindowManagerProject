@@ -24,6 +24,11 @@ public class Renderer extends Thread
         }
     }
     
+    public ArrayList<DesktopCanvas> getCanvases()
+    {
+        return this.canvases;
+    }
+    
     @Override
     public void run()
     {

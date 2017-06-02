@@ -6,12 +6,13 @@ public class Window extends Thread
     private Manager manager;
     private FrameBuffer buffer;
     
-    public Window(Manager manager, Desktop desktop, int width, int height)
+    public Window(Manager manager, Desktop desktop, String title, int width, int height)
     {
         this.manager = manager;
         this.buffer = new FrameBuffer(width, height);
         
         this.manager.add(this);
+        this.manager.setTitle(this, title);
         this.manager.setDesktop(this, desktop);
     }
     
@@ -23,6 +24,7 @@ public class Window extends Thread
     public void setTitle(String title)
     {
         this.manager.setTitle(this, title);
+        //TODO: update request
     }
     
     public String getTitle()
@@ -53,5 +55,15 @@ public class Window extends Thread
     public FrameBuffer getBuffer()
     {
         return this.buffer;
+    }
+    
+    public int getWidth()
+    {
+        return this.buffer.getWidth();
+    }
+    
+    public int getHeight()
+    {
+        return this.buffer.getHeight();
     }
 }
