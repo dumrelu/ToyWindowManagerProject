@@ -153,6 +153,61 @@ public class Manager
         }
     }
     
+    public void update(UpdateRequest request)
+    {
+        this.threadPool.execute(request);
+    }
+    
+    public void lockForUpdate()
+    {
+        this.updateLock.readLock().lock();
+    }
+    
+    public void unlockForUpdate()
+    {
+        this.updateLock.readLock().unlock();
+    }
+    
+    public void lockForRender()
+    {
+        this.updateLock.writeLock().lock();
+    }
+    
+    public void unlockForRender()
+    {
+        this.updateLock.writeLock().unlock();
+    }
+    
+    public void pauseUpdates(Window window)
+    {
+        WindowInfo info = this.windows.get(window);
+        
+        synchronized(info)
+        {
+            info.updateLock.lock();
+        }
+    }
+    
+    public void resumeUpdates(Window window)
+    {
+        WindowInfo info = this.windows.get(window);
+        
+        synchronized(info)
+        {
+            info.updateLock.unlock();
+        }
+    }
+    
+    public boolean canUpdate(Window window)
+    {
+        WindowInfo info = this.windows.get(window);
+        
+        synchronized(info)
+        {
+            return !info.updateLock.isLocked();
+        }
+    }
+    
     private void lockDesktops(DesktopInfo lhs, DesktopInfo rhs)
     {
         if(lhs.name.compareTo(rhs.name) < 0)

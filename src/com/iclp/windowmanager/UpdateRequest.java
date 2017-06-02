@@ -17,7 +17,18 @@ public abstract class UpdateRequest implements Runnable
     @Override
     public void run()
     {
-        //TODO: 
+        Manager manager = this.window.getManager();
+        
+        if(!manager.canUpdate(window))
+        {
+            //Retry the update at a later time
+            manager.update(this);
+            return;
+        }
+        
+        manager.lockForUpdate();
+        update();
+        manager.unlockForUpdate();
     }
     
     protected abstract void update();
