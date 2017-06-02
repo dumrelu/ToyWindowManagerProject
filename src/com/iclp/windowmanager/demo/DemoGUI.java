@@ -3,6 +3,7 @@ package com.iclp.windowmanager.demo;
 import com.iclp.windowmanager.Desktop;
 import com.iclp.windowmanager.DesktopCanvas;
 import com.iclp.windowmanager.Manager;
+import com.iclp.windowmanager.Rectangle;
 import com.iclp.windowmanager.Renderer;
 import com.iclp.windowmanager.Window;
 import java.awt.Color;
@@ -42,6 +43,8 @@ public class DemoGUI extends javax.swing.JFrame
                     {
                         x = 0;
                     }
+                    
+                    //setRectangle(new Rectangle(x, 0, getWidth(), getHeight()));
                     
                     Graphics2D g2 = getBuffer().beginRender();
                     

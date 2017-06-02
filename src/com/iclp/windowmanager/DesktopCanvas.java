@@ -27,6 +27,12 @@ public class DesktopCanvas extends Canvas
             {
                 onMousePressed(e.getX(), e.getY());
             }
+            
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+                onMouseReleased();
+            }
         });
         
         addMouseMotionListener(new MouseAdapter() {
@@ -80,7 +86,6 @@ public class DesktopCanvas extends Canvas
         
         if(this.selectedWindow != null)
         {
-            manager.resumeUpdates(this.selectedWindow);
             this.selectedWindow = null;
         }
         
@@ -91,6 +96,17 @@ public class DesktopCanvas extends Canvas
             this.xDiff = this.selectedWindow.getX() - x;
             this.yDiff = this.selectedWindow.getY() - y;
         }
+    }
+    
+    private void onMouseReleased()
+    {
+        if(this.selectedWindow == null)
+        {
+            return;
+        }
+        
+        Manager manager = this.desktop.getManager();
+        manager.resumeUpdates(this.selectedWindow);
     }
     
     private void onMouseMove(int x, int y)
