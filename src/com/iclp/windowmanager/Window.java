@@ -12,6 +12,7 @@ public class Window extends Thread
         this.buffer = new FrameBuffer(width, height);
         
         this.manager.add(this);
+        this.manager.setRectangle(this, new Rectangle(0, 0, width, height));
         this.manager.setTitle(this, title);
         this.manager.setDesktop(this, desktop);
     }

@@ -42,6 +42,11 @@ public class Manager
         this.updateLock = new ReentrantReadWriteLock();
     }
     
+    public Logger getLogger()
+    {
+        return this.logger;
+    }
+    
     public void add(Window window)
     {
         this.windows.put(window, new WindowInfo());
