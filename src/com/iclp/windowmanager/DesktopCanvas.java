@@ -13,6 +13,7 @@ public class DesktopCanvas extends Canvas
     private Window selectedWindow = null;
     private int xDiff = 0;
     private int yDiff = 0;
+    private boolean shouldMoveWindow = false;
     
     public DesktopCanvas(Desktop desktop)
     {
@@ -113,7 +114,7 @@ public class DesktopCanvas extends Canvas
     
     private void onMouseMove(int x, int y)
     {
-        if(this.selectedWindow == null)
+        if(this.selectedWindow == null || !shouldMoveWindow)
         {
             return;
         }
@@ -137,6 +138,7 @@ public class DesktopCanvas extends Canvas
             if(window.getRectangle().intersects(x, y))
             {
                 clickedWindow = window;
+                shouldMoveWindow = isClickOnWindowBorder(window.getRectangle(), x, y);
                 break;
             }
             manager.resumeUpdates(window);
@@ -144,5 +146,11 @@ public class DesktopCanvas extends Canvas
         
         manager.unlockDesktop(this.desktop);
         return clickedWindow;
+    }
+    
+    private boolean isClickOnWindowBorder(Rectangle windowRect, int x, int y)
+    {
+        Rectangle borderRect = new Rectangle(windowRect.x, windowRect.y, windowRect.width, Renderer.BORDER_HEIGHT);
+        return borderRect.intersects(x, y);
     }
 }

@@ -14,8 +14,8 @@ public class Renderer extends Thread
     private int fps;
     private ArrayList<DesktopCanvas> canvases;
     
-    private static final int BORDER_HEIGHT = 20;
-    private static final int TITLE_OFFSET = 10;
+    public static final int BORDER_HEIGHT = 20;
+    public static final int TITLE_OFFSET = 10;
     
     public Renderer(Manager manager, int fps)
     {
