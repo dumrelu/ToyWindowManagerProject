@@ -283,7 +283,7 @@ public class Manager
     {
         DesktopInfo info = this.desktops.get(desktop);
         
-        synchronized(info)
+        //synchronized(info)
         {
             info.lock.lock();
         }
@@ -293,7 +293,7 @@ public class Manager
     {
         DesktopInfo info = this.desktops.get(desktop);
         
-        synchronized(info)
+        //synchronized(info)
         {
             info.lock.unlock();
         }
