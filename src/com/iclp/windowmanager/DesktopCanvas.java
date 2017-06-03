@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class DesktopCanvas extends Canvas
 {
@@ -132,7 +134,9 @@ public class DesktopCanvas extends Canvas
         
         manager.lockDesktop(this.desktop);
         
-        for(Window window : manager.getWindows(desktop))
+        ArrayList<Window> windows = new ArrayList<>(manager.getWindows(desktop));
+        Collections.reverse(windows);
+        for(Window window : windows)
         {
             manager.pauseUpdates(window);
             Rectangle windowRect = window.getRectangle();
