@@ -29,6 +29,8 @@ public abstract class UpdateRequest implements Runnable
         manager.lockForUpdate();
         update();
         manager.unlockForUpdate();
+        
+        manager.requestProcessed(this);
     }
     
     protected abstract void update();

@@ -493,6 +493,20 @@ public class Manager
         });
     }
     
+    public void requestProcessed(UpdateRequest request)
+    {
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onUpdateRequestExecuted(request);
+                }
+            }
+        });
+    }
+    
     private void lockDesktops(Desktop lhs, Desktop rhs)
     {
         if(lhs.getName().compareTo(rhs.getName()) < 0)
