@@ -82,8 +82,14 @@ public class Window extends Thread
         return this.getRectangle().y;
     }
     
-    protected void onCloseButton()
+    protected synchronized void onCloseButton()
     {
         this.manager.remove(this);
+    }
+    
+    protected synchronized void onClick(int x, int y)
+    {
+        this.manager.getLogger().log(Logger.DEBUG, "Window \"" + getTitle() + "\" clicked at: ("
+                                                    + x + ", " + y + ")");
     }
 }

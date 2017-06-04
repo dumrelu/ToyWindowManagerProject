@@ -155,6 +155,12 @@ public class DesktopCanvas extends Canvas
                 
                 clickedWindow = window;
                 shouldMoveWindow = isClickOnWindowBorder(windowRect, x, y);
+                
+                if(!shouldMoveWindow)
+                {
+                    window.onClick(x - windowRect.x, y - windowRect.y);
+                }
+                
                 break;
             }
             manager.resumeUpdates(window);
