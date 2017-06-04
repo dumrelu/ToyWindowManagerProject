@@ -3,8 +3,10 @@ package com.iclp.windowmanager.demo;
 import com.iclp.windowmanager.Desktop;
 import com.iclp.windowmanager.DesktopCanvas;
 import com.iclp.windowmanager.Manager;
+import com.iclp.windowmanager.ManagerListener;
 import com.iclp.windowmanager.Rectangle;
 import com.iclp.windowmanager.Renderer;
+import com.iclp.windowmanager.UpdateRequest;
 import com.iclp.windowmanager.Window;
 import com.sun.media.jfxmedia.logging.Logger;
 import java.awt.Color;
@@ -12,7 +14,7 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import javax.swing.DefaultListModel;
 
-public class DemoGUI extends javax.swing.JFrame 
+public class DemoGUI extends javax.swing.JFrame implements ManagerListener
 {
     private Manager manager;
 
@@ -107,6 +109,8 @@ public class DemoGUI extends javax.swing.JFrame
             canvasPanel.add(desktopCanvas);
         }
         renderer.start();
+        
+        manager.addListener(this);
     }
 
     /**
@@ -238,4 +242,106 @@ public class DemoGUI extends javax.swing.JFrame
     private javax.swing.JList<String> listFirstWindows;
     private javax.swing.JList<String> listSecondWindows;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void onWindowAdded(Window window) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Window added: " + window.getTitle());
+    }
+
+    @Override
+    public void onWindowRemoved(Window window) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Window removed: " + window.getTitle());
+    }
+
+    @Override
+    public void onWindowFocused(Desktop desktop, Window window) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Window \"" + window.getTitle()+ "\" focused on desktop: " + desktop.getName());
+    }
+
+    @Override
+    public void onWindowUnfocused(Desktop desktop) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Window unfocused on desktop: " + desktop.getName());
+    }
+
+    @Override
+    public void onDesktopAdded(Desktop desktop) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Desktop added: " + desktop.getName());
+    }
+
+    @Override
+    public void onDesktopNameChanged(Desktop desktop, String newName, String oldName) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Desktop \"" + desktop.getName()+ "\" changed name from " + oldName + " to " + newName);
+    }
+
+    @Override
+    public void onWindowTitleChanged(Window window, String newTitle, String oldTitle) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Window \"" + window.getTitle() + "\" changed titles from " + oldTitle + " to " + newTitle);
+    }
+
+    @Override
+    public void onWindowRectangleChanged(Window window, Rectangle newRect, Rectangle oldRect) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Window \"" + window.getTitle() + "\" changed rectangle from " + oldRect + " to " + newRect);
+    }
+
+    @Override
+    public void onWindowDesktopChanged(Window window, Desktop newDesktop, Desktop oldDesktop) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Window \"" + window.getTitle() + "\" changed desktop from " + oldDesktop.getName() + " to " + newDesktop.getName());
+    }
+
+    @Override
+    public void onUpdateRequestAdded(UpdateRequest request) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Update request added: " + request.toString());
+    }
+
+    @Override
+    public void onUpdateRequestExecuted(UpdateRequest request) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Update request executed: " + request.toString());
+    }
+
+    @Override
+    public void onUpdatesPaused() 
+    {
+        //manager.getLogger().log(Logger.DEBUG, "Updates resumed for: all");
+    }
+
+    @Override
+    public void onUpdatesPaused(Desktop desktop) 
+    {
+        //manager.getLogger().log(Logger.DEBUG, "Updates paused for desktop: " + desktop.getName());
+    }
+
+    @Override
+    public void onUpdatesPaused(Window window) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Updates paused for window: " + window.getTitle());
+    }
+
+    @Override
+    public void onUpdatesResumed() 
+    {
+        //manager.getLogger().log(Logger.DEBUG, "Updates resumed for: all");
+    }
+
+    @Override
+    public void onUpdatesResumed(Desktop desktop) 
+    {
+        //manager.getLogger().log(Logger.DEBUG, "Updates resumed for desktop: " + desktop.getName());
+    }
+
+    @Override
+    public void onUpdatesResumed(Window window) 
+    {
+        manager.getLogger().log(Logger.DEBUG, "Updates resumed for window: " + window.getTitle());
+    }
 }
