@@ -34,7 +34,13 @@ public class Logger
             return;
         }
         
-        System.out.println("[" + getLevelName(level) + "]: " + message);
+        String logMessage = "[" + getLevelName(level) + "]: " + message;
+        onLogMessage(message);
+    }
+    
+    protected void onLogMessage(String message)
+    {
+        System.out.println(message);
     }
     
     private static String getLevelName(int level)

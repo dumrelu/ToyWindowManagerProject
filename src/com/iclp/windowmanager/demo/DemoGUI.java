@@ -6,9 +6,11 @@ import com.iclp.windowmanager.Manager;
 import com.iclp.windowmanager.Rectangle;
 import com.iclp.windowmanager.Renderer;
 import com.iclp.windowmanager.Window;
+import com.sun.media.jfxmedia.logging.Logger;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import javax.swing.DefaultListModel;
 
 public class DemoGUI extends javax.swing.JFrame 
 {
@@ -81,6 +83,23 @@ public class DemoGUI extends javax.swing.JFrame
         
         initComponents();
         
+        lblFirstDesktop.setText(desktop1.getName());
+        lblSecondDesktop.setText(desktop2.getName());
+        
+        DefaultListModel<String> model = new DefaultListModel<String>();
+        listFirstWindows.setModel(model);
+        for(Window window : manager.getWindows(desktop1))
+        {
+            model.addElement(window.getTitle());
+        }
+        
+        model = new DefaultListModel<String>();
+        listSecondWindows.setModel(model);
+        for(Window window : manager.getWindows(desktop2))
+        {
+            model.addElement(window.getTitle());
+        }
+        
         canvasPanel.setLayout(new GridLayout(1, 0));
         Renderer renderer = new Renderer(manager, 30);
         for(DesktopCanvas desktopCanvas : renderer.getCanvases())
@@ -100,22 +119,39 @@ public class DemoGUI extends javax.swing.JFrame
     private void initComponents() {
 
         canvasPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lblFirstDesktop = new javax.swing.JLabel();
+        lblSecondDesktop = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        listFirstWindows = new javax.swing.JList<>();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        listSecondWindows = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(1400, 699));
 
         javax.swing.GroupLayout canvasPanelLayout = new javax.swing.GroupLayout(canvasPanel);
         canvasPanel.setLayout(canvasPanelLayout);
         canvasPanelLayout.setHorizontalGroup(
             canvasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 1500, Short.MAX_VALUE)
         );
         canvasPanelLayout.setVerticalGroup(
             canvasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 234, Short.MAX_VALUE)
         );
 
-        jLabel1.setText("jLabel1");
+        lblFirstDesktop.setText("jLabel1");
+
+        lblSecondDesktop.setText("jLabel1");
+
+        listFirstWindows.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listFirstWindowsValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(listFirstWindows);
+
+        jScrollPane2.setViewportView(listSecondWindows);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -123,21 +159,39 @@ public class DemoGUI extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(canvasPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(446, 446, 446)
-                .addComponent(jLabel1)
-                .addContainerGap(1005, Short.MAX_VALUE))
+                .addGap(233, 233, 233)
+                .addComponent(lblFirstDesktop)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblSecondDesktop)
+                .addGap(321, 321, 321))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(165, 165, 165)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(245, 245, 245))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(canvasPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(72, 72, 72)
-                .addComponent(jLabel1)
-                .addGap(0, 376, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblFirstDesktop)
+                    .addComponent(lblSecondDesktop))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap(333, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void listFirstWindowsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listFirstWindowsValueChanged
+        manager.getLogger().log(Logger.DEBUG, listFirstWindows.getSelectedValue().toString());
+    }//GEN-LAST:event_listFirstWindowsValueChanged
 
     /**
      * @param args the command line arguments
@@ -177,6 +231,11 @@ public class DemoGUI extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel canvasPanel;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblFirstDesktop;
+    private javax.swing.JLabel lblSecondDesktop;
+    private javax.swing.JList<String> listFirstWindows;
+    private javax.swing.JList<String> listSecondWindows;
     // End of variables declaration//GEN-END:variables
 }

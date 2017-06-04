@@ -27,7 +27,7 @@ public class Renderer extends Thread
     public static final int CLOSE_BUTTON_OFFSET = 10;
     public static final int START_BAR_HEIGHT = 30;
     public static final int START_BUTTON_WIDTH = 100;
-    public static final int START_TIME_WIDTH = 75;
+    public static final int START_TIME_WIDTH = 125;
     public static final int MAX_START_BAR_LENGTH = 125;
     
     public Renderer(Manager manager, int fps)
@@ -157,7 +157,9 @@ public class Renderer extends Thread
         Date currentDate = new Date();
         g.setColor(Color.BLACK);
         g.drawRect(desktop.getBuffer().getWidth() - START_TIME_WIDTH, 0, START_TIME_WIDTH, START_BAR_HEIGHT);
-        g.drawString(currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds(), desktop.getBuffer().getWidth() - START_TIME_WIDTH, (int) (fontHeight * 0.8));
+        g.drawString(String.format("%02d", currentDate.getHours()) 
+                + ":" + String.format("%02d", currentDate.getMinutes()) 
+                + ":" + String.format("%02d", currentDate.getSeconds()), desktop.getBuffer().getWidth() - START_TIME_WIDTH, (int) (fontHeight * 0.8));
         
         //Startbar applications
         g.setFont(new Font("TimesRoman", Font.PLAIN, 15));
