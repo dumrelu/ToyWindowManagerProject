@@ -99,6 +99,9 @@ public class Renderer extends Thread
             }
             
             g.drawImage(windowFrameBuffer.getBuffer(), windowRect.x, windowRect.y, null);
+            
+            windowFrameBuffer.endRender(windowG);
+            
             g.setColor(Color.BLACK);
             g.drawRoundRect(windowRect.x, windowRect.y, windowRect.width, windowRect.height, 3, 3);
             
@@ -107,7 +110,7 @@ public class Renderer extends Thread
             
             //Title
             String title = window.getTitle();
-            int fontHeight = Math.round(getTextHeight(windowG, title));
+            int fontHeight = Math.round(getTextHeight(g, title));
             int textMargin = BORDER_HEIGHT - fontHeight;
             int textY = fontHeight + textMargin / 2;
             
@@ -131,7 +134,7 @@ public class Renderer extends Thread
             }
 
             
-            windowFrameBuffer.endRender(windowG);
+            
         }
         
         //Start bar
