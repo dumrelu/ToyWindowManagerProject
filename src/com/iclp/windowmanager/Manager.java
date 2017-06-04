@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentHashMap.KeySetView;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
@@ -33,6 +34,7 @@ public class Manager
     private Logger logger;
     private ExecutorService threadPool;
     private ReentrantReadWriteLock updateLock;
+    private CopyOnWriteArrayList<ManagerListener> listeners;
     
     public Manager(int numOfThreads)
     {
@@ -41,6 +43,7 @@ public class Manager
         this.logger = new Logger();
         this.threadPool = Executors.newFixedThreadPool(numOfThreads);
         this.updateLock = new ReentrantReadWriteLock();
+        this.listeners = new CopyOnWriteArrayList<>();
     }
     
     public Logger getLogger()
@@ -48,9 +51,29 @@ public class Manager
         return this.logger;
     }
     
+    public void addListener(ManagerListener listener)
+    {
+        listeners.add(listener);
+    }
+    
+    public void removeListener(ManagerListener listener)
+    {
+        listeners.remove(listener);
+    }
+    
     public void add(Window window)
     {
         this.windows.put(window, new WindowInfo());
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onWindowAdded(window);
+                }
+            }
+        });
     }
     
     public void remove(Window window)
@@ -62,16 +85,40 @@ public class Manager
         {
             info.windows.remove(window);
         }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onWindowRemoved(window);
+                }
+            }
+        });
     }
     
     public void setTitle(Window window, String title)
     {
         WindowInfo info = this.windows.get(window);
         
+        String oldTitle;
         synchronized(info)
         {
+            oldTitle = info.title;
             info.title = title;
         }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onWindowTitleChanged(window, title, oldTitle);
+                }
+            }
+        });
     }
     
     public String getTitle(Window window)
@@ -88,10 +135,23 @@ public class Manager
     {
         WindowInfo info = this.windows.get(window);
         
+        Rectangle oldRect;
         synchronized(info)
         {
+            oldRect = info.rect;
             info.rect = rect;
         }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onWindowRectangleChanged(window, rect, oldRect);
+                }
+            }
+        });
     }
     
     public Rectangle getRectangle(Window window)
@@ -119,12 +179,23 @@ public class Manager
         
         DesktopInfo oldDesktopInfo = this.desktops.get(oldDesktop);
         
-        lockDesktops(desktopInfo, oldDesktopInfo);
+        lockDesktops(desktop, oldDesktop);
         
         oldDesktopInfo.windows.remove(window);
         desktopInfo.windows.add(window);
         
-        unlockDesktops(desktopInfo, oldDesktopInfo);
+        unlockDesktops(desktop, oldDesktop);
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onWindowDesktopChanged(window, oldDesktop, desktop);
+                }
+            }
+        });
     }
     
     public Desktop getDesktop(Window window)
@@ -150,16 +221,40 @@ public class Manager
     public void add(Desktop desktop)
     {
         this.desktops.put(desktop, new DesktopInfo());
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onDesktopAdded(desktop);
+                }
+            }
+        });
     }
     
     public void setName(Desktop desktop, String name)
     {
         DesktopInfo info = this.desktops.get(desktop);
         
+        String oldName;
         synchronized(info)
         {
+            oldName = info.name;
             info.name = name;
         }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onDesktopNameChanged(desktop, name, oldName);
+                }
+            }
+        });
     }
     
     public String getName(Desktop desktop)
@@ -200,6 +295,17 @@ public class Manager
             
             info.focusedWindow = window;
         }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onWindowFocused(desktop, window);
+                }
+            }
+        });
     }
     
     public void unfocusWindow(Window window)
@@ -211,6 +317,17 @@ public class Manager
         {
             info.focusedWindow = null;
         }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onWindowUnfocused(desktop);
+                }
+            }
+        });
     }
     
     public boolean isFocused(Window window)
@@ -227,6 +344,17 @@ public class Manager
     public void update(UpdateRequest request)
     {
         this.threadPool.execute(request);
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onUpdateRequestAdded(request);
+                }
+            }
+        });
     }
     
     public void lockForUpdate()
@@ -242,11 +370,33 @@ public class Manager
     public void lockForRender()
     {
         this.updateLock.writeLock().lock();
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onUpdatesPaused();
+                }
+            }
+        });
     }
     
     public void unlockForRender()
     {
         this.updateLock.writeLock().unlock();
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onUpdatesResumed();
+                }
+            }
+        });
     }
     
     public void pauseUpdates(Window window)
@@ -257,6 +407,17 @@ public class Manager
         {
             info.updateLock.lock();
         }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onUpdatesPaused(window);
+                }
+            }
+        });
     }
     
     public void resumeUpdates(Window window)
@@ -267,6 +428,17 @@ public class Manager
         {
             info.updateLock.unlock();
         }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onUpdatesResumed(window);
+                }
+            }
+        });
     }
     
     public boolean canUpdate(Window window)
@@ -287,6 +459,17 @@ public class Manager
         {
             info.lock.lock();
         }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onUpdatesPaused(desktop);
+                }
+            }
+        });
     }
     
     public void unlockDesktop(Desktop desktop)
@@ -297,25 +480,36 @@ public class Manager
         {
             info.lock.unlock();
         }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onUpdatesResumed(desktop);
+                }
+            }
+        });
     }
     
-    private void lockDesktops(DesktopInfo lhs, DesktopInfo rhs)
+    private void lockDesktops(Desktop lhs, Desktop rhs)
     {
-        if(lhs.name.compareTo(rhs.name) < 0)
+        if(lhs.getName().compareTo(rhs.getName()) < 0)
         {
-            lhs.lock.lock();
-            rhs.lock.lock();
+            lockDesktop(lhs);
+            lockDesktop(rhs);
         }
         else
         {
-            rhs.lock.lock();
-            lhs.lock.lock();
+            lockDesktop(rhs);
+            lockDesktop(lhs);
         }
     }
     
-    private void unlockDesktops(DesktopInfo lhs, DesktopInfo rhs)
+    private void unlockDesktops(Desktop lhs, Desktop rhs)
     {
-        lhs.lock.unlock();
-        rhs.lock.unlock();
+        unlockDesktop(lhs);
+        unlockDesktop(rhs);
     }
 }
