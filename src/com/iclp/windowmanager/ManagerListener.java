@@ -15,6 +15,7 @@ public interface ManagerListener
     public void onWindowRemoved(Window window);
     public void onWindowFocused(Desktop desktop, Window window);
     public void onWindowUnfocused(Desktop desktop);
+    public void onWindowsSwapped(Window first, Window second);
     
     public void onDesktopAdded(Desktop desktop);
     public void onDesktopNameChanged(Desktop desktop, String newName, String oldName);

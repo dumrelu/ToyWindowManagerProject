@@ -132,6 +132,7 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         listFirstWindows = new javax.swing.JList<>();
         jScrollPane2 = new javax.swing.JScrollPane();
         listSecondWindows = new javax.swing.JList<>();
+        btnSwap = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1400, 699));
@@ -165,6 +166,13 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         });
         jScrollPane2.setViewportView(listSecondWindows);
 
+        btnSwap.setText("Swap windows");
+        btnSwap.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSwapActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -179,6 +187,8 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
             .addGroup(layout.createSequentialGroup()
                 .addGap(165, 165, 165)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(295, 295, 295)
+                .addComponent(btnSwap)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(245, 245, 245))
@@ -191,10 +201,15 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblFirstDesktop)
                     .addComponent(lblSecondDesktop))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(btnSwap)))
                 .addContainerGap(333, Short.MAX_VALUE))
         );
 
@@ -218,6 +233,22 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
             manager.focusWindow(manager.getWindowByTitle(listSecondWindows.getSelectedValue()));
         }
     }//GEN-LAST:event_listSecondWindowsValueChanged
+
+    private void btnSwapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSwapActionPerformed
+        int firstWindowIndex = listFirstWindows.getSelectedIndex();
+        int secondWindowIndex = listSecondWindows.getSelectedIndex();
+        if(firstWindowIndex == -1 || secondWindowIndex == -1)
+        {
+            manager.getLogger().log(Logger.DEBUG, "Please select windows on both sides");
+            return;
+        }
+        
+        Window firstWindow = manager.getWindowByTitle(listFirstWindows.getSelectedValue());
+        Window secondWindow = manager.getWindowByTitle(listSecondWindows.getSelectedValue());
+        manager.swapDesktops(firstWindow, secondWindow);
+        
+        manager.getLogger().log(Logger.DEBUG, "Swaped window \"" + firstWindow.getTitle() + "\" with \"" + secondWindow.getTitle() + "\"");
+    }//GEN-LAST:event_btnSwapActionPerformed
 
     /**
      * @param args the command line arguments
@@ -256,6 +287,7 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnSwap;
     private javax.swing.JPanel canvasPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -384,5 +416,23 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     public void onUpdatesResumed(Window window) 
     {
         manager.getLogger().log(Logger.DEBUG, "Updates resumed for window: " + window.getTitle());
+    }
+
+    @Override
+    public void onWindowsSwapped(Window first, Window second) 
+    {
+        DefaultListModel<String> model = new DefaultListModel<>();
+        listFirstWindows.setModel(model);
+        for(Window window : manager.getWindows(desktop1))
+        {
+            model.addElement(window.getTitle());
+        }
+        
+        model = new DefaultListModel<>();
+        listSecondWindows.setModel(model);
+        for(Window window : manager.getWindows(desktop2))
+        {
+            model.addElement(window.getTitle());
+        }
     }
 }

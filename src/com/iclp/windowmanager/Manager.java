@@ -210,6 +210,40 @@ public class Manager
         });
     }
     
+    public void swapDesktops(Window first, Window second)
+    {
+        lockWindows(first, second);
+        
+        Desktop firstDesktop = getDesktop(first);
+        Desktop secondDesktop = getDesktop(second);
+        if(firstDesktop != secondDesktop)
+        {
+            unfocusWindow(first);
+            unfocusWindow(second);
+            
+            setDesktop(first, secondDesktop);
+            setDesktop(second, firstDesktop);
+            
+            Rectangle firstRect = first.getRectangle();
+            Rectangle secondRect = second.getRectangle();
+            first.setRectangle(new Rectangle(secondRect.x, secondRect.y, firstRect.width, firstRect.height));
+            second.setRectangle(new Rectangle(firstRect.x, firstRect.y, secondRect.width, secondRect.height));
+        }
+        
+        unlockWindows(first, second);
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onWindowsSwapped(first, second);
+                }
+            }
+        });
+    }
+    
     public Desktop getDesktop(Window window)
     {
         for(Entry<Desktop, DesktopInfo> entry : this.desktops.entrySet())
@@ -533,9 +567,29 @@ public class Manager
         }
     }
     
+    private void lockWindows(Window lhs, Window rhs)
+    {
+        if(lhs.getName().compareTo(rhs.getName()) < 0)
+        {
+            pauseUpdates(lhs);
+            pauseUpdates(rhs);
+        }
+        else
+        {
+            pauseUpdates(rhs);
+            pauseUpdates(lhs);
+        }
+    }
+    
     private void unlockDesktops(Desktop lhs, Desktop rhs)
     {
         unlockDesktop(lhs);
         unlockDesktop(rhs);
+    }
+    
+    private void unlockWindows(Window lhs, Window rhs)
+    {
+        resumeUpdates(lhs);
+        resumeUpdates(rhs);
     }
 }
