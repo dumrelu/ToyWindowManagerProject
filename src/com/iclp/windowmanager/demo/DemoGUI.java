@@ -61,7 +61,6 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
                     g2.setColor(Color.RED);
                     g2.drawString("Hello World!", x, y);
                     
-                    g2.dispose();
                     
                     getBuffer().endRender(g2);
                     
@@ -111,8 +110,8 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         {
             canvasPanel.add(desktopCanvas);
         }
-        renderer.start();
         
+        renderer.start();
         manager.addListener(this);
     }
 

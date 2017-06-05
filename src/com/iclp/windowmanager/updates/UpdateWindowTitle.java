@@ -16,7 +16,7 @@ public class UpdateWindowTitle extends UpdateRequest
     }
 
     @Override
-    protected void update() 
+    public void update() 
     {
         Window window = getWindow();
         Manager manager = window.getManager();

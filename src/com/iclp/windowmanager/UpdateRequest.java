@@ -1,6 +1,6 @@
 package com.iclp.windowmanager;
 
-public abstract class UpdateRequest implements Runnable
+public abstract class UpdateRequest
 {
     private Window window;
     
@@ -14,24 +14,5 @@ public abstract class UpdateRequest implements Runnable
         return this.window;
     }
     
-    @Override
-    public void run()
-    {
-        Manager manager = this.window.getManager();
-        
-        if(!manager.canUpdate(window))
-        {
-            //Retry the update at a later time
-            manager.update(this);
-            return;
-        }
-        
-        manager.lockForUpdate();
-        update();
-        manager.unlockForUpdate();
-        
-        manager.requestProcessed(this);
-    }
-    
-    protected abstract void update();
+    public abstract void update();
 }

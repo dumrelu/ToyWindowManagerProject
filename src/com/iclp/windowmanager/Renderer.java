@@ -90,17 +90,13 @@ public class Renderer extends Thread
         for(Window window : this.manager.getWindows(desktop))
         {
             FrameBuffer windowFrameBuffer = window.getBuffer();
-            Graphics2D windowG = windowFrameBuffer.tryBeginRender();
             Rectangle windowRect = window.getRectangle();
             
-            if(windowG == null)
+            if(windowFrameBuffer.getLock().tryLock())
             {
-                continue;
+                g.drawImage(windowFrameBuffer.getBuffer(), windowRect.x, windowRect.y, null);
+                windowFrameBuffer.getLock().unlock();
             }
-            
-            g.drawImage(windowFrameBuffer.getBuffer(), windowRect.x, windowRect.y, null);
-            
-            windowFrameBuffer.endRender(windowG);
             
             g.setColor(Color.BLACK);
             g.drawRoundRect(windowRect.x, windowRect.y, windowRect.width, windowRect.height, 3, 3);

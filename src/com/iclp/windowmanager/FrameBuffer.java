@@ -27,6 +27,11 @@ public class FrameBuffer
     
     public void resize(int width, int height)
     {
+        if(this.buffer != null && width == getWidth() && height == getHeight())
+        {
+            return;
+        }
+        
         this.buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
     

@@ -17,7 +17,7 @@ public class UpdateWindowDesktop extends UpdateRequest
     }
 
     @Override
-    protected void update() 
+    public void update() 
     {
         Window window = getWindow();
         Manager manager = window.getManager();

@@ -14,11 +14,72 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 //      - swapDesktops(watch out for the focused window information)
 public class Manager
 {
+    private class WindowUpdateExecutor implements Runnable
+    {
+        private Manager manager;
+        private Window window;
+        private ArrayList<UpdateRequest> requests;
+
+        public WindowUpdateExecutor(Manager manager, Window window) 
+        {
+            this.manager = manager;
+            this.window = window;
+            this.requests = new ArrayList<>();
+        }
+        
+        public synchronized void enqueue(UpdateRequest request)
+        {
+            requests.add(request);
+            
+            if(requests.size() == 1)
+            {
+                manager.threadPool.execute(this);
+            }
+        }
+
+        @Override
+        public void run() 
+        {
+            if(!manager.canUpdate(window))
+            {
+                //Retry the update at a later time
+                manager.threadPool.execute(this);
+                return;
+            }
+            
+            manager.lockForUpdate();
+            UpdateRequest request;
+            synchronized(this)
+            {
+                request = requests.get(0);
+                requests.remove(0);
+            }
+            request.update();
+            manager.unlockForUpdate();
+
+            manager.requestProcessed(request);
+            
+            synchronized(this)
+            {
+                if(!requests.isEmpty())
+                {
+                    manager.threadPool.execute(this);
+                }
+            }
+        }
+    }
+    
     private class WindowInfo
     {
         String title = "";
         Rectangle rect = new Rectangle();
+        WindowUpdateExecutor executor;
         ReentrantLock updateLock = new ReentrantLock();
+        
+        WindowInfo(WindowUpdateExecutor executor)
+        {
+            this.executor = executor;
+        }
     }
     
     private class DesktopInfo
@@ -63,7 +124,7 @@ public class Manager
     
     public void add(Window window)
     {
-        this.windows.put(window, new WindowInfo());
+        this.windows.put(window, new WindowInfo(new WindowUpdateExecutor(this, window)));
         threadPool.execute(new Runnable() {
             @Override
             public void run() 
@@ -389,7 +450,8 @@ public class Manager
     
     public void update(UpdateRequest request)
     {
-        this.threadPool.execute(request);
+        WindowInfo info = windows.get(request.getWindow());
+        info.executor.enqueue(request);
         
         threadPool.execute(new Runnable() {
             @Override
