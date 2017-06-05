@@ -13,10 +13,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.JList;
 
 public class DemoGUI extends javax.swing.JFrame implements ManagerListener
 {
     private Manager manager;
+    private Desktop desktop1;
+    private Desktop desktop2;
 
     /**
      * Creates new form DemoGUI
@@ -72,8 +75,8 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
             }
         }
 
-        Desktop desktop1 = new Desktop(this.manager, "Desktop1", Color.GREEN, 700, 500);
-        Desktop desktop2 = new Desktop(this.manager, "Desktop2", Color.ORANGE, 700, 500);
+        desktop1 = new Desktop(this.manager, "Desktop1", Color.GREEN, 700, 500);
+        desktop2 = new Desktop(this.manager, "Desktop2", Color.ORANGE, 700, 500);
         
         Window window1 = new TestWindow(this.manager, desktop1, "Window 1", 300, 200);
         window1.start();
@@ -155,6 +158,11 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         });
         jScrollPane1.setViewportView(listFirstWindows);
 
+        listSecondWindows.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listSecondWindowsValueChanged(evt);
+            }
+        });
         jScrollPane2.setViewportView(listSecondWindows);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -194,8 +202,22 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     }// </editor-fold>//GEN-END:initComponents
 
     private void listFirstWindowsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listFirstWindowsValueChanged
-        manager.getLogger().log(Logger.DEBUG, listFirstWindows.getSelectedValue().toString());
+        if(listFirstWindows.getSelectedIndex() != -1)
+        {
+            manager.getLogger().log(Logger.DEBUG, listFirstWindows.getSelectedValue().toString());
+            
+            manager.focusWindow(manager.getWindowByTitle(listFirstWindows.getSelectedValue()));
+        }
     }//GEN-LAST:event_listFirstWindowsValueChanged
+
+    private void listSecondWindowsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listSecondWindowsValueChanged
+        if(listSecondWindows.getSelectedIndex() != -1)
+        {
+            manager.getLogger().log(Logger.DEBUG, listSecondWindows.getSelectedValue());
+            
+            manager.focusWindow(manager.getWindowByTitle(listSecondWindows.getSelectedValue()));
+        }
+    }//GEN-LAST:event_listSecondWindowsValueChanged
 
     /**
      * @param args the command line arguments
@@ -259,12 +281,31 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     public void onWindowFocused(Desktop desktop, Window window) 
     {
         manager.getLogger().log(Logger.DEBUG, "Window \"" + window.getTitle()+ "\" focused on desktop: " + desktop.getName());
+        
+        JList<String> list = desktop == desktop1 ? listFirstWindows : listSecondWindows;
+        int windowIndex = getWindowIndex(list, window);
+        list.setSelectedIndex(windowIndex);
+    }
+    
+    private int getWindowIndex(JList<String> list, Window window)
+    {
+        for(int i = 0; i < list.getModel().getSize(); ++i)
+        {
+            if(list.getModel().getElementAt(i) == window.getTitle())
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public void onWindowUnfocused(Desktop desktop) 
     {
         manager.getLogger().log(Logger.DEBUG, "Window unfocused on desktop: " + desktop.getName());
+        
+        JList<String> list = desktop == desktop1 ? listFirstWindows : listSecondWindows;
+        list.clearSelection();
     }
 
     @Override

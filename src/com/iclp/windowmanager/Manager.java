@@ -76,6 +76,18 @@ public class Manager
         });
     }
     
+    public Window getWindowByTitle(String title)
+    {
+        for(Entry<Window, WindowInfo> entry : this.windows.entrySet())
+        {
+            if(entry.getValue().title == title)
+            {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+    
     public void remove(Window window)
     {
         Desktop desktop = getDesktop(window);
