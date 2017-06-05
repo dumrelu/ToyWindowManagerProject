@@ -300,13 +300,13 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     @Override
     public void onUpdateRequestAdded(UpdateRequest request) 
     {
-        manager.getLogger().log(Logger.DEBUG, "Update request added: " + request.toString());
+        manager.getLogger().log(Logger.DEBUG, "Update request added(window = \"" + request.getWindow().getTitle() + "\"): " + request.toString());
     }
 
     @Override
     public void onUpdateRequestExecuted(UpdateRequest request) 
     {
-        manager.getLogger().log(Logger.DEBUG, "Update request executed: " + request.toString());
+        manager.getLogger().log(Logger.DEBUG, "Update request executed(window = \"" + request.getWindow().getTitle() + "\"): " + request.toString());
     }
 
     @Override

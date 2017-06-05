@@ -28,4 +28,12 @@ public class Rectangle
         return x >= this.x && x < right &&
                y >= this.y && y < bottom;
     }
+
+    @Override
+    public String toString() 
+    {
+        return "(x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + ")";
+    }
+    
+    
 }

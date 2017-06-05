@@ -23,4 +23,10 @@ public class UpdateWindowTitle extends UpdateRequest
         
         manager.setTitle(window, this.title);
     }
+
+    @Override
+    public String toString() 
+    {
+        return "UpdateWindowTitle{" + "title=" + title + '}';
+    }
 }

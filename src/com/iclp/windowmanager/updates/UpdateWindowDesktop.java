@@ -24,4 +24,12 @@ public class UpdateWindowDesktop extends UpdateRequest
         
         manager.setDesktop(window, this.desktop);
     }
+
+    @Override
+    public String toString() 
+    {
+        return "UpdateWindowDesktop{" + "desktop=" + desktop.getName() + '}';
+    }
+    
+    
 }

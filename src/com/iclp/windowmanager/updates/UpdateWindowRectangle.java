@@ -25,4 +25,10 @@ public class UpdateWindowRectangle extends UpdateRequest
         manager.setRectangle(window, this.rect);
         window.getBuffer().resize(rect.width, rect.height);
     }
+
+    @Override
+    public String toString() 
+    {
+        return "UpdateWindowRectangle{" + "rect=" + rect + '}';
+    }
 }
