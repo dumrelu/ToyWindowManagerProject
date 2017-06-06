@@ -12,6 +12,7 @@ import com.sun.media.jfxmedia.logging.Logger;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
@@ -106,10 +107,22 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         
         canvasPanel.setLayout(new GridLayout(1, 0));
         Renderer renderer = new Renderer(manager, 30);
-        for(DesktopCanvas desktopCanvas : renderer.getCanvases())
+        ArrayList<DesktopCanvas> canvases = renderer.getCanvases();
+        if(canvases.get(0).getDesktop() == desktop1)
+        {
+            canvasPanel.add(canvases.get(0));
+            canvasPanel.add(canvases.get(1));
+        }
+        else
+        {
+            canvasPanel.add(canvases.get(1));
+            canvasPanel.add(canvases.get(0));
+        }
+        
+        /*for(DesktopCanvas desktopCanvas : renderer.getCanvases())
         {
             canvasPanel.add(desktopCanvas);
-        }
+        }*/
         
         renderer.start();
         manager.addListener(this);
