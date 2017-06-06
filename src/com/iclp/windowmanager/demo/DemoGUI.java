@@ -91,19 +91,7 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         lblFirstDesktop.setText(desktop1.getName());
         lblSecondDesktop.setText(desktop2.getName());
         
-        DefaultListModel<String> model = new DefaultListModel<String>();
-        listFirstWindows.setModel(model);
-        for(Window window : manager.getWindows(desktop1))
-        {
-            model.addElement(window.getTitle());
-        }
-        
-        model = new DefaultListModel<String>();
-        listSecondWindows.setModel(model);
-        for(Window window : manager.getWindows(desktop2))
-        {
-            model.addElement(window.getTitle());
-        }
+        updateLists();
         
         canvasPanel.setLayout(new GridLayout(1, 0));
         Renderer renderer = new Renderer(manager, 30);
@@ -145,6 +133,7 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         jScrollPane2 = new javax.swing.JScrollPane();
         listSecondWindows = new javax.swing.JList<>();
         btnSwap = new javax.swing.JButton();
+        btnOpenDebugWindow = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1400, 699));
@@ -185,6 +174,13 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
             }
         });
 
+        btnOpenDebugWindow.setText("Open Debug Window");
+        btnOpenDebugWindow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOpenDebugWindowActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -200,7 +196,9 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
                 .addGap(165, 165, 165)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(295, 295, 295)
-                .addComponent(btnSwap)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnSwap)
+                    .addComponent(btnOpenDebugWindow))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(245, 245, 245))
@@ -221,8 +219,10 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(37, 37, 37)
-                        .addComponent(btnSwap)))
-                .addContainerGap(333, Short.MAX_VALUE))
+                        .addComponent(btnSwap)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnOpenDebugWindow)))
+                .addContainerGap(329, Short.MAX_VALUE))
         );
 
         pack();
@@ -262,6 +262,14 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         manager.getLogger().log(Logger.DEBUG, "Swaped window \"" + firstWindow.getTitle() + "\" with \"" + secondWindow.getTitle() + "\"");
     }//GEN-LAST:event_btnSwapActionPerformed
 
+    private void btnOpenDebugWindowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenDebugWindowActionPerformed
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new DebugFrame().setVisible(true);
+            }
+        });
+    }//GEN-LAST:event_btnOpenDebugWindowActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -299,6 +307,7 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnOpenDebugWindow;
     private javax.swing.JButton btnSwap;
     private javax.swing.JPanel canvasPanel;
     private javax.swing.JScrollPane jScrollPane1;
@@ -368,6 +377,8 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     public void onWindowTitleChanged(Window window, String newTitle, String oldTitle) 
     {
         manager.getLogger().log(Logger.DEBUG, "Window \"" + window.getTitle() + "\" changed titles from " + oldTitle + " to " + newTitle);
+        
+        updateLists();
     }
 
     @Override
@@ -432,6 +443,11 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
 
     @Override
     public void onWindowsSwapped(Window first, Window second) 
+    {
+        updateLists();
+    }
+    
+    public void updateLists()
     {
         DefaultListModel<String> model = new DefaultListModel<>();
         listFirstWindows.setModel(model);
