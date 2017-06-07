@@ -52,7 +52,7 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
                         x = 0;
                     }
                     
-                    //setRectangle(new Rectangle(x, 0, getWidth(), getHeight()));
+                    setRectangle(new Rectangle(x, 0, getWidth(), getHeight()));
                     
                     Graphics2D g2 = getBuffer().beginRender();
                     
@@ -265,7 +265,7 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     private void btnOpenDebugWindowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenDebugWindowActionPerformed
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DebugFrame().setVisible(true);
+                new DebugFrame(manager).setVisible(true);
             }
         });
     }//GEN-LAST:event_btnOpenDebugWindowActionPerformed

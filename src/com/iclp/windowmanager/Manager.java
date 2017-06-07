@@ -11,7 +11,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 //TODO: 
-//      - swapDesktops(watch out for the focused window information)
+//      v swapDesktops(watch out for the focused window information)
+//      - update delay
 public class Manager
 {
     private class WindowUpdateExecutor implements Runnable
@@ -387,6 +388,11 @@ public class Manager
         {
             return info.windows;
         }
+    }
+    
+    public KeySetView<Window, WindowInfo> getWindows()
+    {
+        return windows.keySet();
     }
     
     public void focusWindow(Window window)

@@ -5,17 +5,34 @@
  */
 package com.iclp.windowmanager.demo;
 
+import com.iclp.windowmanager.Desktop;
+import com.iclp.windowmanager.Manager;
+import com.iclp.windowmanager.ManagerListener;
+import com.iclp.windowmanager.Rectangle;
+import com.iclp.windowmanager.UpdateRequest;
+import com.iclp.windowmanager.Window;
+import javax.swing.DefaultListModel;
+
 /**
  *
  * @author relu
  */
-public class DebugFrame extends javax.swing.JFrame {
+public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
 
+    private Manager manager;
+    private Window selectedWindow = null;
+    
     /**
      * Creates new form DebugFrame
      */
-    public DebugFrame() {
+    public DebugFrame(Manager manager) {
+        this.manager = manager;
         initComponents();
+        txtUpdates.setEditable(false);
+        
+        initWindows();
+        
+        manager.addListener(this);
     }
 
     /**
@@ -48,6 +65,11 @@ public class DebugFrame extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        listWindows.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listWindowsValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(listWindows);
 
         lblTitle.setText("Title:");
@@ -70,8 +92,18 @@ public class DebugFrame extends javax.swing.JFrame {
         lblUpdates.setText("Updates:");
 
         btnWindowResume.setText("Resume");
+        btnWindowResume.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnWindowResumeActionPerformed(evt);
+            }
+        });
 
         btnWindowPause.setText("Pause");
+        btnWindowPause.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnWindowPauseActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -80,32 +112,27 @@ public class DebugFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                        .addComponent(btnWindowPause)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnWindowResume)
+                        .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(38, 38, 38)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblTitle)
-                            .addComponent(lblRect))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtRect)
-                            .addComponent(txtTitle)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(38, 38, 38)
-                                .addComponent(lblUpdates))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblTitle)
+                                    .addComponent(lblRect))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnWindowPause)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtRect)
+                                    .addComponent(txtTitle)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(lblUpdates)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtUpdates))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(4, 4, 4)
-                                .addComponent(btnWindowResume)
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap())
+                                .addComponent(txtUpdates))))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -140,7 +167,7 @@ public class DebugFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 218, Short.MAX_VALUE))
+                .addGap(0, 204, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -161,40 +188,24 @@ public class DebugFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTitleActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void listWindowsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listWindowsValueChanged
+        selectedWindow = manager.getWindowByTitle(listWindows.getSelectedValue());
+        updateWindowData();
+    }//GEN-LAST:event_listWindowsValueChanged
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new DebugFrame().setVisible(true);
-            }
-        });
-    }
+    private void btnWindowPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWindowPauseActionPerformed
+        if(selectedWindow != null)
+        {
+            manager.pauseUpdates(selectedWindow);
+        }
+    }//GEN-LAST:event_btnWindowPauseActionPerformed
+
+    private void btnWindowResumeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWindowResumeActionPerformed
+        if(selectedWindow != null)
+        {
+            manager.resumeUpdates(selectedWindow);
+        }
+    }//GEN-LAST:event_btnWindowResumeActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnWindowPause;
@@ -209,4 +220,122 @@ public class DebugFrame extends javax.swing.JFrame {
     private javax.swing.JTextField txtTitle;
     private javax.swing.JTextField txtUpdates;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void onWindowAdded(Window window) {
+        initWindows();
+    }
+
+    @Override
+    public void onWindowRemoved(Window window) {
+        initWindows();
+    }
+
+    @Override
+    public void onWindowFocused(Desktop desktop, Window window) {
+        updateWindowData();
+    }
+
+    @Override
+    public void onWindowUnfocused(Desktop desktop) {
+        updateWindowData();
+    }
+
+    @Override
+    public void onWindowsSwapped(Window first, Window second) {
+        updateWindowData();
+    }
+
+    @Override
+    public void onDesktopAdded(Desktop desktop) {
+        
+    }
+
+    @Override
+    public void onDesktopNameChanged(Desktop desktop, String newName, String oldName) {
+        
+    }
+
+    @Override
+    public void onWindowTitleChanged(Window window, String newTitle, String oldTitle) {
+        initWindows();
+        updateWindowData();
+    }
+
+    @Override
+    public void onWindowRectangleChanged(Window window, Rectangle newRect, Rectangle oldRect) {
+        updateWindowData();
+    }
+
+    @Override
+    public void onWindowDesktopChanged(Window window, Desktop newDesktop, Desktop oldDesktop) {
+        
+    }
+
+    @Override
+    public void onUpdateRequestAdded(UpdateRequest request) {
+        
+    }
+
+    @Override
+    public void onUpdateRequestExecuted(UpdateRequest request) {
+        
+    }
+
+    @Override
+    public void onUpdatesPaused() {
+        
+    }
+
+    @Override
+    public void onUpdatesPaused(Desktop desktop) {
+        
+    }
+
+    @Override
+    public void onUpdatesPaused(Window window) {
+        updateWindowData();
+    }
+
+    @Override
+    public void onUpdatesResumed() {
+        
+    }
+
+    @Override
+    public void onUpdatesResumed(Desktop desktop) {
+        
+    }
+
+    @Override
+    public void onUpdatesResumed(Window window) {
+        updateWindowData();
+    }
+    
+    private void initWindows()
+    {
+        DefaultListModel<String> model = new DefaultListModel<>();
+        listWindows.setModel(model);
+        for(Window window : manager.getWindows())
+        {
+            model.addElement(window.getTitle());
+        }
+    }
+    
+    private void updateWindowData()
+    {
+        if(selectedWindow == null)
+        {
+            return;
+        }
+        
+        txtTitle.setText("");
+        txtRect.setText("");
+        txtUpdates.setText("");
+        
+        txtTitle.setText(selectedWindow.getTitle());
+        Rectangle rect = selectedWindow.getRectangle();
+        txtRect.setText("(" + rect.x + "," + rect.y + "," + rect.width + "," + rect.height + ")");
+        txtUpdates.setText(manager.canUpdate(selectedWindow) ? "ON" : "OFF");
+    }
 }
