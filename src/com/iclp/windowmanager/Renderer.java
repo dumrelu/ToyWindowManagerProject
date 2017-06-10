@@ -58,7 +58,10 @@ public class Renderer extends Thread
             {
                 Desktop desktop = canvas.getDesktop();
                 
-                this.manager.lockDesktop(desktop);
+                if(!manager.tryLockDesktop(desktop))
+                {
+                    continue;
+                }
                 renderDesktop(desktop);
                 this.manager.unlockDesktop(desktop);
                 

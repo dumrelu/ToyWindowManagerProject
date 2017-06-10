@@ -313,9 +313,13 @@ public class Manager
             Desktop desktop = entry.getKey();
             DesktopInfo desktopInfo = entry.getValue();
             
-            desktopInfo.lock.lock();
-            int index = desktopInfo.windows.indexOf(window);
-            desktopInfo.lock.unlock();
+            //desktopInfo.lock.lock();
+            int index = -1;
+            synchronized(desktopInfo)
+            {
+                index = desktopInfo.windows.indexOf(window);
+            }
+            //desktopInfo.lock.unlock();
             
             if(index != -1)
             {
@@ -340,6 +344,18 @@ public class Manager
                 }
             }
         });
+    }
+    
+    public Desktop getDesktopByName(String name)
+    {
+        for(Desktop desktop : desktops.keySet())
+        {
+            if(desktop.getName() == name)
+            {
+                return desktop;
+            }
+        }
+        return null;
     }
     
     public void setName(Desktop desktop, String name)
@@ -454,6 +470,16 @@ public class Manager
         }
     }
     
+    public Window getFocusedWindow(Desktop desktop)
+    {
+        DesktopInfo info = desktops.get(desktop);
+        
+        synchronized(info)
+        {
+            return info.focusedWindow;
+        }
+    }
+    
     public void update(UpdateRequest request)
     {
         WindowInfo info = windows.get(request.getWindow());
@@ -565,6 +591,16 @@ public class Manager
         }
     }
     
+    public boolean canUpdate(Desktop desktop)
+    {
+        DesktopInfo info = desktops.get(desktop);
+        
+        synchronized(info)
+        {
+            return !info.lock.isLocked();
+        }
+    }
+    
     public void lockDesktop(Desktop desktop)
     {
         DesktopInfo info = this.desktops.get(desktop);
@@ -584,6 +620,30 @@ public class Manager
                 }
             }
         });
+    }
+    
+    public boolean tryLockDesktop(Desktop desktop)
+    {
+        DesktopInfo info = this.desktops.get(desktop);
+        boolean locked = info.lock.tryLock();
+        
+        if(!locked)
+        {
+            return false;
+        }
+        
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() 
+            {
+                for(ManagerListener listener : listeners)
+                {
+                    listener.onUpdatesPaused(desktop);
+                }
+            }
+        });
+        
+        return true;
     }
     
     public void unlockDesktop(Desktop desktop)

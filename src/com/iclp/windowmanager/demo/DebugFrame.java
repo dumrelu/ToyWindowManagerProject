@@ -21,6 +21,7 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
 
     private Manager manager;
     private Window selectedWindow = null;
+    private Desktop selectedDesktop = null;
     
     /**
      * Creates new form DebugFrame
@@ -31,6 +32,7 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
         txtUpdates.setEditable(false);
         
         initWindows();
+        initDesktops();
         
         manager.addListener(this);
     }
@@ -64,6 +66,10 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
         txtDesktopName = new javax.swing.JTextField();
         txtWindowCount = new javax.swing.JTextField();
         txtFocusedWindowName = new javax.swing.JTextField();
+        lblDesktopUpdates = new javax.swing.JLabel();
+        txtDesktopUpdates = new javax.swing.JTextField();
+        btnPauseDesktopUpdates = new javax.swing.JButton();
+        btnResumeWindowUpdates = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -177,6 +183,11 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        listDesktops.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listDesktopsValueChanged(evt);
+            }
+        });
         jScrollPane2.setViewportView(listDesktops);
 
         lblDesktopName.setText("Name:");
@@ -184,6 +195,22 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
         lblNumOfWindows.setText("Window count:");
 
         lblFocusedWindowName.setText("Focused window:");
+
+        lblDesktopUpdates.setText("Updates:");
+
+        btnPauseDesktopUpdates.setText("Pause");
+        btnPauseDesktopUpdates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPauseDesktopUpdatesActionPerformed(evt);
+            }
+        });
+
+        btnResumeWindowUpdates.setText("Resume");
+        btnResumeWindowUpdates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResumeWindowUpdatesActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -204,12 +231,25 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(lblFocusedWindowName)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtFocusedWindowName, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)))
+                        .addComponent(txtFocusedWindowName))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lblDesktopUpdates)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtDesktopUpdates))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                        .addComponent(btnPauseDesktopUpdates)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnResumeWindowUpdates)
+                        .addGap(15, 15, 15)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblDesktopName)
@@ -221,7 +261,15 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblFocusedWindowName)
-                    .addComponent(txtFocusedWindowName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(txtFocusedWindowName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDesktopUpdates)
+                    .addComponent(txtDesktopUpdates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnPauseDesktopUpdates)
+                    .addComponent(btnResumeWindowUpdates)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -232,7 +280,7 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 408, Short.MAX_VALUE))
+                .addGap(0, 410, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,8 +288,7 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -274,7 +321,28 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
         }
     }//GEN-LAST:event_btnWindowResumeActionPerformed
 
+    private void listDesktopsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listDesktopsValueChanged
+        selectedDesktop = manager.getDesktopByName(listDesktops.getSelectedValue());
+        updateDesktopData();
+    }//GEN-LAST:event_listDesktopsValueChanged
+
+    private void btnPauseDesktopUpdatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPauseDesktopUpdatesActionPerformed
+        if(selectedDesktop != null)
+        {
+            manager.lockDesktop(selectedDesktop);
+        }
+    }//GEN-LAST:event_btnPauseDesktopUpdatesActionPerformed
+
+    private void btnResumeWindowUpdatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResumeWindowUpdatesActionPerformed
+        if(selectedDesktop != null)
+        {
+            manager.unlockDesktop(selectedDesktop);
+        }
+    }//GEN-LAST:event_btnResumeWindowUpdatesActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnPauseDesktopUpdates;
+    private javax.swing.JButton btnResumeWindowUpdates;
     private javax.swing.JButton btnWindowPause;
     private javax.swing.JButton btnWindowResume;
     private javax.swing.JPanel jPanel1;
@@ -282,6 +350,7 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblDesktopName;
+    private javax.swing.JLabel lblDesktopUpdates;
     private javax.swing.JLabel lblFocusedWindowName;
     private javax.swing.JLabel lblNumOfWindows;
     private javax.swing.JLabel lblRect;
@@ -290,6 +359,7 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
     private javax.swing.JList<String> listDesktops;
     private javax.swing.JList<String> listWindows;
     private javax.swing.JTextField txtDesktopName;
+    private javax.swing.JTextField txtDesktopUpdates;
     private javax.swing.JTextField txtFocusedWindowName;
     private javax.swing.JTextField txtRect;
     private javax.swing.JTextField txtTitle;
@@ -300,21 +370,24 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
     @Override
     public void onWindowAdded(Window window) {
         initWindows();
+        updateDesktopData();
     }
 
     @Override
     public void onWindowRemoved(Window window) {
         initWindows();
+        updateDesktopData();
     }
 
     @Override
     public void onWindowFocused(Desktop desktop, Window window) {
-        updateWindowData();
+        //updateWindowData();
+        updateDesktopData();
     }
 
     @Override
     public void onWindowUnfocused(Desktop desktop) {
-        updateWindowData();
+        //updateWindowData();
     }
 
     @Override
@@ -324,28 +397,36 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
 
     @Override
     public void onDesktopAdded(Desktop desktop) {
-        
+        initDesktops();
     }
 
     @Override
     public void onDesktopNameChanged(Desktop desktop, String newName, String oldName) {
-        
+        initDesktops();
+        updateDesktopData();
     }
 
     @Override
     public void onWindowTitleChanged(Window window, String newTitle, String oldTitle) {
         initWindows();
         updateWindowData();
+        updateDesktopData();
     }
 
     @Override
     public void onWindowRectangleChanged(Window window, Rectangle newRect, Rectangle oldRect) {
-        updateWindowData();
+        //updateWindowData();
+        
+        if(selectedWindow != null)
+        {
+            Rectangle rect = selectedWindow.getRectangle();
+            txtRect.setText("(" + rect.x + "," + rect.y + "," + rect.width + "," + rect.height + ")");
+        }
     }
 
     @Override
     public void onWindowDesktopChanged(Window window, Desktop newDesktop, Desktop oldDesktop) {
-        
+        updateDesktopData();
     }
 
     @Override
@@ -365,7 +446,12 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
 
     @Override
     public void onUpdatesPaused(Desktop desktop) {
+        //updateDesktopData();
         
+        if(selectedDesktop != null)
+        {
+            txtDesktopUpdates.setText(manager.canUpdate(selectedDesktop) ? "ON" : "OFF");
+        }
     }
 
     @Override
@@ -380,7 +466,12 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
 
     @Override
     public void onUpdatesResumed(Desktop desktop) {
+        //updateDesktopData();
         
+        if(selectedDesktop != null)
+        {
+            txtDesktopUpdates.setText(manager.canUpdate(selectedDesktop) ? "ON" : "OFF");
+        }
     }
 
     @Override
@@ -413,5 +504,41 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
         Rectangle rect = selectedWindow.getRectangle();
         txtRect.setText("(" + rect.x + "," + rect.y + "," + rect.width + "," + rect.height + ")");
         txtUpdates.setText(manager.canUpdate(selectedWindow) ? "ON" : "OFF");
+    }
+    
+    private void initDesktops()
+    {
+        DefaultListModel<String> model = new DefaultListModel<>();
+        listDesktops.setModel(model);
+        for(Desktop desktop : manager.getDesktops())
+        {
+            model.addElement(desktop.getName());
+        }
+    }
+    
+    private void updateDesktopData()
+    {
+        if(selectedDesktop == null)
+        {
+            return;
+        }
+        
+        txtDesktopName.setText("");
+        txtWindowCount.setText("");
+        txtFocusedWindowName.setText("");
+        txtDesktopUpdates.setText("");
+        
+        txtDesktopName.setText(selectedDesktop.getName());
+        txtWindowCount.setText("" + manager.getWindows(selectedDesktop).size());
+        Window focusedWindow = manager.getFocusedWindow(selectedDesktop);
+        if(focusedWindow != null)
+        {
+            txtFocusedWindowName.setText(focusedWindow.getTitle());
+        }
+        else
+        {
+            txtFocusedWindowName.setText("N/A");
+        }
+        txtDesktopUpdates.setText(manager.canUpdate(selectedDesktop) ? "ON" : "OFF");
     }
 }
