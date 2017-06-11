@@ -482,9 +482,6 @@ public class Manager
     
     public void update(UpdateRequest request)
     {
-        WindowInfo info = windows.get(request.getWindow());
-        info.executor.enqueue(request);
-        
         //threadPool.execute(new Runnable() {
         //    @Override
         //    public void run() 
@@ -495,6 +492,9 @@ public class Manager
                 }
         //    }
         //});
+        
+        WindowInfo info = windows.get(request.getWindow());
+        info.executor.enqueue(request);
     }
     
     public void lockForUpdate()
