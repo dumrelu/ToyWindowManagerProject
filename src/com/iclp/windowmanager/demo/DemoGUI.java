@@ -78,7 +78,7 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         desktop1 = new Desktop(this.manager, "Desktop1", Color.GREEN, 700, 500);
         desktop2 = new Desktop(this.manager, "Desktop2", Color.ORANGE, 700, 500);
         
-        Window window1 = new TestWindow(this.manager, desktop1, "Window 1", 300, 200);
+        Window window1 = new BouncingTextWindow(this.manager, desktop1, "Window 1", 300, 200, "Hello World!");
         window1.start();
         Window window2 = new TestWindow(this.manager, desktop2, "Window 2", 300, 200);
         window2.start();
@@ -322,12 +322,14 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     public void onWindowAdded(Window window) 
     {
         manager.getLogger().log(Logger.DEBUG, "Window added: " + window.getTitle());
+        updateLists();
     }
 
     @Override
     public void onWindowRemoved(Window window) 
     {
         manager.getLogger().log(Logger.DEBUG, "Window removed: " + window.getTitle());
+        updateLists();
     }
 
     @Override

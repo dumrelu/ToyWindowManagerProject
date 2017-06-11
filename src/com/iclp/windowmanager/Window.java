@@ -10,6 +10,7 @@ public class Window extends Thread
 {
     private Manager manager;
     private FrameBuffer buffer;
+    private boolean closed = false;
     
     public Window(Manager manager, Desktop desktop, String title, int width, int height)
     {
@@ -82,9 +83,15 @@ public class Window extends Thread
         return this.getRectangle().y;
     }
     
+    public boolean isClosed()
+    {
+        return closed;
+    }
+    
     protected synchronized void onCloseButton()
     {
         this.manager.remove(this);
+        closed = true;
     }
     
     protected synchronized void onClick(int x, int y)

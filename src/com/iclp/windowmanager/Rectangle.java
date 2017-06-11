@@ -28,6 +28,18 @@ public class Rectangle
         return x >= this.x && x < right &&
                y >= this.y && y < bottom;
     }
+    
+    public boolean intersects(Rectangle other)
+    {
+        return (Math.abs(x - other.x) * 2 < (width + other.width)) &&
+         (Math.abs(y - other.y) * 2 < (height + other.height));
+    }
+    
+    public boolean contains(Rectangle other)
+    {
+        return x < other.x && x + width > other.x + other.width
+                && y < other.y && y + height > other.y + other.height;
+    }
 
     @Override
     public String toString() 
