@@ -28,7 +28,7 @@ public class UpdateWindowDesktop extends UpdateRequest
     @Override
     public String toString() 
     {
-        return "UpdateWindowDesktop{" + "desktop=" + desktop.getName() + '}';
+        return "UpdateWindowDesktop{ window=" + getWindow().getTitle() + ", desktop=" + desktop.getName() + '}';
     }
     
     

@@ -27,6 +27,6 @@ public class UpdateWindowTitle extends UpdateRequest
     @Override
     public String toString() 
     {
-        return "UpdateWindowTitle{" + "title=" + title + '}';
+        return "UpdateWindowTitle{ window=" + getWindow().getTitle() + ", title=" + title + '}';
     }
 }

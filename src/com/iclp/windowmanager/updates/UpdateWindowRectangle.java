@@ -29,6 +29,6 @@ public class UpdateWindowRectangle extends UpdateRequest
     @Override
     public String toString() 
     {
-        return "UpdateWindowRectangle{" + "rect=" + rect + '}';
+        return "UpdateWindowRectangle{ window=" + getWindow().getTitle() + ", rect=" + rect + '}';
     }
 }
