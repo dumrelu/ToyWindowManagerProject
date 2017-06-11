@@ -485,16 +485,16 @@ public class Manager
         WindowInfo info = windows.get(request.getWindow());
         info.executor.enqueue(request);
         
-        threadPool.execute(new Runnable() {
-            @Override
-            public void run() 
-            {
+        //threadPool.execute(new Runnable() {
+        //    @Override
+        //    public void run() 
+        //    {
                 for(ManagerListener listener : listeners)
                 {
                     listener.onUpdateRequestAdded(request);
                 }
-            }
-        });
+        //    }
+        //});
     }
     
     public void lockForUpdate()
@@ -669,16 +669,16 @@ public class Manager
     
     public void requestProcessed(UpdateRequest request)
     {
-        threadPool.execute(new Runnable() {
-            @Override
-            public void run() 
-            {
+        //threadPool.execute(new Runnable() {
+        //    @Override
+        //    public void run() 
+        //    {
                 for(ManagerListener listener : listeners)
                 {
                     listener.onUpdateRequestExecuted(request);
                 }
-            }
-        });
+        //    }
+        //});
     }
     
     private void lockDesktops(Desktop lhs, Desktop rhs)

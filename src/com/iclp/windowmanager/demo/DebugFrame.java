@@ -13,6 +13,7 @@ import com.iclp.windowmanager.UpdateRequest;
 import com.iclp.windowmanager.Window;
 import com.sun.media.jfxmedia.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -561,29 +562,45 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
 
     @Override
     public void onUpdateRequestAdded(UpdateRequest request) {
-        DefaultListModel<String> model = (DefaultListModel<String>) listUpdates.getModel();
-        model.addElement(request.toString());
-        if(cbAutoScroll.isSelected())
+        synchronized(this)
         {
-            int lastIndex = model.getSize() - 1;
-            listUpdates.ensureIndexIsVisible(lastIndex);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    DefaultListModel<String> model = (DefaultListModel<String>) listUpdates.getModel();
+                    model.addElement(request.toString());
+                    if(cbAutoScroll.isSelected())
+                    {
+                        int lastIndex = model.getSize() - 1;
+                        listUpdates.ensureIndexIsVisible(lastIndex);
+                    }
+                }
+            });
         }
     }
 
     @Override
     public void onUpdateRequestExecuted(UpdateRequest request) {
-        DefaultListModel<String> pendingUpdatesModel = (DefaultListModel<String>) listUpdates.getModel();
-        DefaultListModel<String> executedUpdatesModel = (DefaultListModel<String>) listExecutedUpdates.getModel();
-        
-        String updateString = request.toString();
-        pendingUpdatesModel.removeElement(updateString);
-        executedUpdatesModel.addElement(updateString);
-        if(cbAutoScroll.isSelected())
+        synchronized(this)
         {
-            int lastPendingIndex = pendingUpdatesModel.getSize() - 1;
-            int lastExecutedIndex = executedUpdatesModel.getSize() - 1;
-            listUpdates.ensureIndexIsVisible(lastPendingIndex);
-            listExecutedUpdates.ensureIndexIsVisible(lastExecutedIndex);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    DefaultListModel<String> pendingUpdatesModel = (DefaultListModel<String>) listUpdates.getModel();
+                    DefaultListModel<String> executedUpdatesModel = (DefaultListModel<String>) listExecutedUpdates.getModel();
+
+                    String updateString = request.toString();
+                    pendingUpdatesModel.removeElement(updateString);
+                    executedUpdatesModel.addElement(updateString);
+                    if(cbAutoScroll.isSelected())
+                    {
+                        int lastPendingIndex = pendingUpdatesModel.getSize() - 1;
+                        int lastExecutedIndex = executedUpdatesModel.getSize() - 1;
+                        listUpdates.ensureIndexIsVisible(lastPendingIndex);
+                        listExecutedUpdates.ensureIndexIsVisible(lastExecutedIndex);
+                    }
+                }
+            });
         }
     }
 
