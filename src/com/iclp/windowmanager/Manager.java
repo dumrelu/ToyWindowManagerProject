@@ -288,8 +288,6 @@ public class Manager
             setDesktop(first, secondDesktop);
             setDesktop(second, firstDesktop);
             
-            unlockDesktops(firstDesktop, secondDesktop);
-            
             lockWindows(first, second);
             
             Rectangle firstRect = first.getRectangle();
@@ -298,7 +296,7 @@ public class Manager
             second.setRectangle(new Rectangle(firstRect.x, firstRect.y, secondRect.width, secondRect.height));
             
             unlockWindows(first, second);
-            
+            unlockDesktops(firstDesktop, secondDesktop);
         }
         
         unlockWindows(first, second);
