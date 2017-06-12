@@ -280,16 +280,25 @@ public class Manager
         Desktop secondDesktop = getDesktop(second);
         if(firstDesktop != secondDesktop)
         {
+            lockDesktops(firstDesktop, secondDesktop);
+            
             unfocusWindow(first);
             unfocusWindow(second);
             
             setDesktop(first, secondDesktop);
             setDesktop(second, firstDesktop);
             
+            unlockDesktops(firstDesktop, secondDesktop);
+            
+            lockWindows(first, second);
+            
             Rectangle firstRect = first.getRectangle();
             Rectangle secondRect = second.getRectangle();
             first.setRectangle(new Rectangle(secondRect.x, secondRect.y, firstRect.width, firstRect.height));
             second.setRectangle(new Rectangle(firstRect.x, firstRect.y, secondRect.width, secondRect.height));
+            
+            unlockWindows(first, second);
+            
         }
         
         unlockWindows(first, second);
