@@ -1,11 +1,14 @@
 package com.iclp.windowmanager;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Logger 
 {
     public static final int INFO = 0;
     public static final int DEBUG = 1;
     
     private int level;
+    private AtomicInteger counter = new AtomicInteger(0);
     
     public Logger()
     {
@@ -27,18 +30,18 @@ public class Logger
         this.level = level;
     }
     
-    public synchronized void log(int level, String message)
+    public void log(int level, String message)
     {
         if(level > this.level)
         {
             return;
         }
         
-        String logMessage = "[" + getLevelName(level) + "]: " + message;
-        onLogMessage(message);
+        String logMessage = "[" + getLevelName(level) + "][" + counter.incrementAndGet() + "]: " + message;
+        onLogMessage(logMessage);
     }
     
-    protected void onLogMessage(String message)
+    protected synchronized void onLogMessage(String message)
     {
         System.out.println(message);
     }
