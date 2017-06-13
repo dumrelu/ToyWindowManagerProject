@@ -85,6 +85,9 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         Window window3 = new TestWindow(this.manager, desktop2, "Window 3", 300, 200);
         window3.setRectangle(new Rectangle(50, 50, 300, 200));
         window3.start();
+        Window window4 = new DesktopMovingWindow(manager, desktop1, "Window 4", 300, 200);
+        window4.setRectangle(new Rectangle(200, 200, 350, 200));
+        window4.start();
         
         initComponents();
         
@@ -393,6 +396,7 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     public void onWindowDesktopChanged(Window window, Desktop newDesktop, Desktop oldDesktop) 
     {
         manager.getLogger().log(Logger.DEBUG, "Window \"" + window.getTitle() + "\" changed desktop from " + oldDesktop.getName() + " to " + newDesktop.getName());
+        updateLists();
     }
 
     @Override
