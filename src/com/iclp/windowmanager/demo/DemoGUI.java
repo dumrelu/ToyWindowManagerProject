@@ -80,7 +80,7 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         
         Window window1 = new BouncingTextWindow(this.manager, desktop1, "Window 1", 300, 200, "Hello World!");
         window1.start();
-        Window window2 = new TestWindow(this.manager, desktop2, "Window 2", 300, 200);
+        Window window2 = new MovinTestWindow(this.manager, desktop2, "Window 2", 300, 200);
         window2.start();
         Window window3 = new TestWindow(this.manager, desktop2, "Window 3", 300, 200);
         window3.setRectangle(new Rectangle(50, 50, 300, 200));
