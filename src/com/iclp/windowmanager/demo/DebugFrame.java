@@ -84,7 +84,7 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
         lblPauseAllUpdates = new javax.swing.JButton();
         btnResumeAllUpdates = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Windows"));
 

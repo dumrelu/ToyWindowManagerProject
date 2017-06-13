@@ -41,9 +41,14 @@ public class DesktopMovingWindow extends Window
                 Desktop currentDesktop = getDesktop();
                 for(Desktop desktop : getManager().getDesktops())
                 {
-                    if(currentDesktop != desktop)
+                    if(currentDesktop != desktop && getManager().tryLockDesktop(desktop))
                     {
-                        setDesktop(desktop);
+                    	if(getManager().tryLockDesktop(currentDesktop))
+                    	{
+                    		setDesktop(desktop);
+                    		getManager().unlockDesktop(currentDesktop);
+                    	}
+                    	getManager().unlockDesktop(desktop);
                     }
                 }
             }
