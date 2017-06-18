@@ -12,7 +12,9 @@ import com.sun.media.jfxmedia.logging.Logger;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
@@ -25,12 +27,12 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     /**
      * Creates new form DemoGUI
      */
-    public DemoGUI() 
+    public DemoGUI() throws IOException 
     {
         this.manager = new Manager(4);
 
-        desktop1 = new Desktop(this.manager, "Desktop1", Color.GREEN, 700, 500);
-        desktop2 = new Desktop(this.manager, "Desktop2", Color.ORANGE, 700, 500);
+        desktop1 = new Desktop(this.manager, "Desktop1", "res/desktop.jpg", 700, 500);
+        desktop2 = new Desktop(this.manager, "Desktop2", "res/desktop.jpg", 700, 500);
         
         Window window1 = new BouncingTextWindow(this.manager, desktop1, "Hello world", 300, 200, "Hello World!");
         window1.start();
@@ -268,7 +270,11 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DemoGUI().setVisible(true);
+                try {
+                    new DemoGUI().setVisible(true);
+                } catch (IOException ex) {
+                    java.util.logging.Logger.getLogger(DemoGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

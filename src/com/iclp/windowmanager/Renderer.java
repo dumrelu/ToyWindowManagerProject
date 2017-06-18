@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -86,9 +87,8 @@ public class Renderer extends Thread
         FrameBuffer frameBuffer = desktop.getBuffer();
         Graphics2D g = frameBuffer.beginRender();
         
-        Color background = desktop.getBackground();
-        g.setColor(background);
-        g.fillRect(0, 0, frameBuffer.getWidth(), frameBuffer.getHeight());
+        BufferedImage background = desktop.getBackground();
+        g.drawImage(background, 0, 0, desktop.getBuffer().getWidth(), desktop.getBuffer().getHeight(), null);
         
         for(Window window : this.manager.getWindows(desktop))
         {
