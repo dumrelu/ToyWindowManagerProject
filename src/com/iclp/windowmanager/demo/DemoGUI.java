@@ -89,6 +89,13 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
         window4.setRectangle(new Rectangle(200, 200, 350, 200));
         window4.start();
         
+        Window window5 = new PictureWindow(manager, desktop1, "Window 5", 300, 200, "res/chrome.png");
+        window5.setRectangle(new Rectangle(0, 300, 300, 200));
+        window5.run();
+        Window window6 = new PictureWindow(manager, desktop2, "Window 6", 300, 200, "res/word.png");
+        window6.setRectangle(new Rectangle(0, 300, 300, 200));
+        window6.run();
+        
         initComponents();
         
         lblFirstDesktop.setText(desktop1.getName());
