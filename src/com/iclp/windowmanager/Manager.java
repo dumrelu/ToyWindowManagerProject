@@ -160,6 +160,7 @@ public class Manager
             info.windows.remove(window);
         }
         
+        
         threadPool.execute(new Runnable() {
             @Override
             public void run() 

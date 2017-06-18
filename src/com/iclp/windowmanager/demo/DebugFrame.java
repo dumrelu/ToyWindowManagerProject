@@ -656,13 +656,16 @@ public class DebugFrame extends javax.swing.JFrame implements ManagerListener {
         listWindows.setModel(model);
         for(Window window : manager.getWindows())
         {
-            model.addElement(window.getTitle());
+            if(!window.isClosed())
+            {
+                model.addElement(window.getTitle());
+            }
         }
     }
     
     private void updateWindowData()
     {
-        if(selectedWindow == null)
+        if(selectedWindow == null || selectedWindow.getDesktop() == null)
         {
             return;
         }
