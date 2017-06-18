@@ -28,73 +28,30 @@ public class DemoGUI extends javax.swing.JFrame implements ManagerListener
     public DemoGUI() 
     {
         this.manager = new Manager(4);
-        
-        class TestWindow extends Window
-        {
-
-            public TestWindow(Manager manager, Desktop desktop, String title,int width, int height) {
-                super(manager, desktop, title, width, height);
-            }
-
-            @Override
-            public void run()
-            {
-                int x = 0, y = getHeight() / 2;
-                
-                while(true)
-                {
-                    if(x < getWidth())
-                    {
-                        ++x;
-                    }
-                    else
-                    {
-                        x = 0;
-                    }
-                    
-                    setRectangle(new Rectangle(x, 0, getWidth(), getHeight()));
-                    
-                    Graphics2D g2 = getBuffer().beginRender();
-                    
-                    g2.setColor(Color.WHITE);
-                    g2.fillRect(0, 0, getWidth(), getHeight());
-                    
-                    g2.setColor(Color.RED);
-                    g2.drawString("Hello World!", x, y);
-                    
-                    
-                    getBuffer().endRender(g2);
-                    
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
 
         desktop1 = new Desktop(this.manager, "Desktop1", Color.GREEN, 700, 500);
         desktop2 = new Desktop(this.manager, "Desktop2", Color.ORANGE, 700, 500);
         
-        Window window1 = new BouncingTextWindow(this.manager, desktop1, "Window 1", 300, 200, "Hello World!");
+        Window window1 = new BouncingTextWindow(this.manager, desktop1, "Hello world", 300, 200, "Hello World!");
         window1.start();
-        Window window2 = new MovinTestWindow(this.manager, desktop2, "Window 2", 300, 200);
+        Window window2 = new MovinTestWindow(this.manager, desktop2, "Moving window", 300, 200);
         window2.start();
-        Window window3 = new TestWindow(this.manager, desktop2, "Window 3", 300, 200);
-        window3.setRectangle(new Rectangle(50, 50, 300, 200));
+        Window window3 = new BouncingTextWindow(this.manager, desktop2, "Bouncing", 300, 200, "Bouncing!");
+        window3.setRectangle(new Rectangle(365, 50, 300, 200));
         window3.start();
-        Window window4 = new DesktopMovingWindow(manager, desktop1, "Window 4", 300, 200);
+        Window window4 = new DesktopMovingWindow(manager, desktop1, "Desktop move", 300, 200);
         window4.setRectangle(new Rectangle(200, 200, 350, 200));
         window4.start();
         
-        Window window5 = new PictureWindow(manager, desktop1, "Window 5", 300, 200, "res/chrome.png");
-        window5.setRectangle(new Rectangle(0, 300, 300, 200));
+        Window window5 = new PictureWindow(manager, desktop1, "Chrome", 300, 200, "res/chrome.png");
+        window5.setRectangle(new Rectangle(350, 50, 300, 200));
         window5.run();
-        Window window6 = new PictureWindow(manager, desktop2, "Window 6", 300, 200, "res/word.png");
-        window6.setRectangle(new Rectangle(0, 300, 300, 200));
+        Window window6 = new PictureWindow(manager, desktop2, "Word", 300, 200, "res/word.png");
+        window6.setRectangle(new Rectangle(350, 250, 300, 200));
         window6.run();
+        Window window7 = new PictureWindow(manager, desktop1, "Skype", 300, 200, "res/skype.png");
+        window7.setRectangle(new Rectangle(45, 250, 300, 200));
+        window7.run();
         
         initComponents();
         

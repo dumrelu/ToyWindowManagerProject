@@ -49,13 +49,19 @@ public class Manager
             }
             
             manager.lockForUpdate();
-            UpdateRequest request;
+            UpdateRequest request = null;
             synchronized(this)
             {
-                request = requests.get(0);
-                requests.remove(0);
+                if(!requests.isEmpty())
+                {
+                    request = requests.get(0);
+                    requests.remove(0);
+                }
             }
-            request.update();
+            if(request != null)
+            {
+                request.update();
+            }
             manager.unlockForUpdate();
 
             manager.requestProcessed(request);
